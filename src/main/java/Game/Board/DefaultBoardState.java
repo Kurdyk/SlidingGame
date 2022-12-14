@@ -5,6 +5,7 @@ import Game.Cell.TaquinCell;
 import Game.Solver.Heuristic;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DefaultBoardState implements TaquinBoardState {
 
@@ -129,5 +130,18 @@ public class DefaultBoardState implements TaquinBoardState {
         }
 
         return boardImplementation.get(getSize() - 1).get(getSize() - 1).isEmpty();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultBoardState that = (DefaultBoardState) o;
+        return size == that.size && boardImplementation.equals(that.boardImplementation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(size, boardImplementation);
     }
 }
