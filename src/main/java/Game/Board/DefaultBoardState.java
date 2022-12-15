@@ -2,8 +2,10 @@ package Game.Board;
 
 import Game.Cell.Position;
 import Game.Cell.TaquinCell;
+import Game.Solver.Heuristic;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DefaultBoardState implements TaquinBoardState {
 
@@ -18,6 +20,17 @@ public class DefaultBoardState implements TaquinBoardState {
             for (int j = 0; j < size; j++) {
                 // This ensures that we can set cells to specific positions when they are first inserted
                 boardImplementation.get(i).add(null);
+            }
+        }
+    }
+
+    public DefaultBoardState(DefaultBoardState boardState) {
+        this.size = boardState.size;
+        for (int i = 0; i < size; i++) {
+            boardImplementation.add(new ArrayList<>(size));
+            for (int j = 0; j < size; j++) {
+                // This ensures that we can set cells to specific positions when they are first inserted
+                setAtPosition(new Position(j, i), boardState.getAtPosition(j, i));
             }
         }
     }
@@ -79,5 +92,56 @@ public class DefaultBoardState implements TaquinBoardState {
             default -> throw new IllegalStateException("Unexpected value: " + direction);
         }
         return getAtPosition(neighborPosition);
+    }
+
+    @Override
+    public int reportHeuristicValue(Heuristic heuristic) {
+        return 0;
+    }
+
+    @Override
+    public TaquinBoardState copy() {
+        return new DefaultBoardState(this);
+    }
+
+    @Override
+    public TaquinCell getEmptyPosition() {
+        for (int y = 0; y < getSize(); y++) {
+            for (int x = 0; x < getSize(); x++) {
+                if (getAtPosition(x, y).isEmpty()) {
+                    return getAtPosition(x, y);
+                }
+            }
+        }
+
+        throw new IllegalStateException("Board has no empty cell");
+    }
+
+    @Override
+    public boolean isGoalState() {
+        var lastSeenValue = getAtPosition(0, 0).getCellId();
+        for (int y = 0; y < getSize(); y++) {
+            for (int x = 0; x < getSize(); x++) {
+                var evaluating = getAtPosition(x, y);
+                if (evaluating.getCellId() < lastSeenValue) {
+                    return false;
+                }
+            }
+        }
+
+        return boardImplementation.get(getSize() - 1).get(getSize() - 1).isEmpty();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultBoardState that = (DefaultBoardState) o;
+        return size == that.size && boardImplementation.equals(that.boardImplementation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(size, boardImplementation);
     }
 }

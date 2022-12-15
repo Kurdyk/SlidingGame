@@ -1,5 +1,7 @@
 package Game.Cell;
 
+import java.util.Objects;
+
 public abstract class TaquinCell {
 
     public static int BLANK_ID = -1;
@@ -34,5 +36,18 @@ public abstract class TaquinCell {
 
     public void setPosition(Position position) {
         this.position = position;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TaquinCell that = (TaquinCell) o;
+        return id == that.id && position.equals(that.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, position);
     }
 }

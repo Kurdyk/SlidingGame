@@ -84,4 +84,12 @@ public class TaquinController implements Initializable {
         this.boardDisplay.getScene().getWindow().setWidth(this.boardDisplay.getWidth() + 100);
         System.out.println(this.board);
     }
+
+    @FXML
+    private void onSolveClick() {
+        // TODO: here we will choose the Heuristic we want to use
+        var solution_instructions = this.board.solve();
+
+        //TODO replay the solution instructions as operations on the board
+    }
 }

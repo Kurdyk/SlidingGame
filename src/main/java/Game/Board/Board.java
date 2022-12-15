@@ -4,6 +4,8 @@ import Game.Cell.CellFactory;
 import Game.Cell.TaquinCell;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class Board {
@@ -78,5 +80,9 @@ public class Board {
                 // directions will throw exceptions
             }
         }
+    }
+
+    public List<TaquinBoardInstruction> solve() {
+        return Collections.emptyList();
     }
 }
