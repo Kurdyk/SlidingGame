@@ -50,24 +50,23 @@ public class AStar {
             var currentState = states.remove();
 
             if (currentState.getState().isGoalState()) {
-                var iterator = currentState;
-                var instructions = new ArrayList<SolutionStep>();
-                do {
-                    instructions.add(iterator);
-                    iterator = iterator.getParentState();
-                }
-                while (currentState.getParentState() != null);
-                return instructions;
+                return unwindSolutionTree(currentState);
             }
 
             // For each possible move in the board, we need to have a new board state instance after the move
-            // So we need a way to clone board states, and then apply moves to them
+            // So we need a way to clone board states, and then apply moves to each board state
             // We also need a way to iterate over the possible moves
             var emptyPosition = currentState.getState().getEmptyPosition();
             for (TaquinBoardDirection direction : TaquinBoardDirection.values()) {
                 var newBoardState = currentState.getState().copy();
                 var instruction = TaquinBoardInstruction.mapFromDirection(direction);
-                newBoardState.processInstruction(instruction, emptyPosition);
+                try {
+                    newBoardState.processInstruction(instruction, emptyPosition);
+                } catch (IllegalStateException exception) {
+                    // It is normal to see this exception as we try each direction
+                    // An optimization would be to not try invalid directions
+                    continue;
+                }
 
                 if (seenStates.contains(newBoardState)) {
                     // What should we do here? Is this in the right spot?
@@ -83,6 +82,17 @@ public class AStar {
         }
 
         return Collections.emptyList();
+    }
+
+    private List<SolutionStep> unwindSolutionTree(SolutionStep terminalNode) {
+        var iterator = terminalNode;
+        var instructions = new ArrayList<SolutionStep>();
+        do {
+            instructions.add(iterator);
+            iterator = iterator.getParentState();
+        }
+        while (iterator.getParentState() != null);
+        return instructions;
     }
 
 }
