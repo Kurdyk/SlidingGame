@@ -2,7 +2,6 @@ package Game.Board;
 
 import Game.Cell.Position;
 import Game.Cell.TaquinCell;
-import Game.Solver.Heuristic;
 
 public interface TaquinBoardState {
     int getSize();
@@ -18,8 +17,6 @@ public interface TaquinBoardState {
     void addCell(TaquinCell cell);
 
     TaquinCell getEmptyPosition();
-
-    int reportHeuristicValue(Heuristic heuristic);
 
     TaquinBoardState copy();
 

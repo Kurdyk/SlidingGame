@@ -35,7 +35,7 @@ public class AStar {
         var stateComparator = new Comparator<SolutionStep>() {
             @Override
             public int compare(SolutionStep o1, SolutionStep o2) {
-                return o1.getState().reportHeuristicValue(heuristic) - o2.getState().reportHeuristicValue(heuristic);
+                return heuristic.getHeuristicValue(o1.getState()) - heuristic.getHeuristicValue(o2.getState());
             }
         };
         states = new PriorityQueue<>(stateComparator);

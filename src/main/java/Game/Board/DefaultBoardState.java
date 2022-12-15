@@ -2,7 +2,6 @@ package Game.Board;
 
 import Game.Cell.Position;
 import Game.Cell.TaquinCell;
-import Game.Solver.Heuristic;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -92,11 +91,6 @@ public class DefaultBoardState implements TaquinBoardState {
             default -> throw new IllegalStateException("Unexpected value: " + direction);
         }
         return getAtPosition(neighborPosition);
-    }
-
-    @Override
-    public int reportHeuristicValue(Heuristic heuristic) {
-        return 0;
     }
 
     @Override

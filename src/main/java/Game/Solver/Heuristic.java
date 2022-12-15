@@ -1,7 +1,7 @@
 package Game.Solver;
 
-import Game.Cell.TaquinCell;
+import Game.Board.TaquinBoardState;
 
 public abstract class Heuristic {
-    public abstract int getHeuristicValue(TaquinCell cell);
+    public abstract int getHeuristicValue(TaquinBoardState cell);
 }
