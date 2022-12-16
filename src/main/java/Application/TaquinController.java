@@ -2,7 +2,10 @@ package Application;
 
 import Game.Board.Board;
 import Game.Board.DefaultBoardState;
+import Game.Board.TargetBoardState;
 import Game.Cell.DefaultCellFactory;
+import Game.Solver.AStar;
+import Game.Solver.Heuristic.DisplacedTilesHeuristic;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -87,9 +90,10 @@ public class TaquinController implements Initializable {
 
     @FXML
     private void onSolveClick() {
-        // TODO: here we will choose the Heuristic we want to use
-        var solution_instructions = this.board.solve();
-
-        //TODO replay the solution instructions as operations on the board
+        var heuristic = new DisplacedTilesHeuristic(new TargetBoardState(Integer.parseInt(this.sizeField.getText())));
+        var solution = board.solve(new AStar(heuristic, new DefaultCellFactory()));
+        for (var step : solution) {
+            System.out.println("Instruction: " + step.instruction());
+        }
     }
 }

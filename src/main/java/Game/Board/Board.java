@@ -2,17 +2,17 @@ package Game.Board;
 
 import Game.Cell.CellFactory;
 import Game.Cell.TaquinCell;
+import Game.Solver.SolutionStep;
+import Game.Solver.TaquinSolutionAlgorithm;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class Board {
 
-    private final TaquinBoardState boardState;
     private final CellFactory cellFactory;
-
+    private TaquinBoardState boardState;
 
     public Board(TaquinBoardState boardState, CellFactory cellFactory) {
         this.boardState = boardState;
@@ -23,6 +23,10 @@ public class Board {
 
     public TaquinBoardState getBoardState() {
         return boardState;
+    }
+
+    public void setBoardState(TaquinBoardState boardState) {
+        this.boardState = boardState;
     }
 
     public int getSize() {
@@ -56,14 +60,7 @@ public class Board {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < getSize(); i++) {
-            for (int j = 0; j < getSize(); j++) {
-                stringBuilder.append(this.boardState.getAtPosition(j, i).getCellId()).append(", ");
-            }
-            stringBuilder.append('\n');
-        }
-        return stringBuilder.toString();
+        return boardState.toString();
     }
 
     public void move(int x, int y) {
@@ -82,7 +79,7 @@ public class Board {
         }
     }
 
-    public List<TaquinBoardInstruction> solve() {
-        return Collections.emptyList();
+    public List<SolutionStep> solve(TaquinSolutionAlgorithm algorithm) {
+        return algorithm.solve(getBoardState());
     }
 }
