@@ -1,24 +1,25 @@
 package Game.Board;
 
+import Game.Cell.CellFactory;
 import Game.Cell.Position;
 import Game.Cell.TaquinCell;
 
-public interface TaquinBoardState {
-    int getSize();
+public abstract class TaquinBoardState {
+    public abstract int getSize();
 
-    TaquinCell getAtPosition(int x, int y);
+    public abstract TaquinCell getAtPosition(int x, int y);
 
-    TaquinCell getAtPosition(Position position);
+    public abstract TaquinCell getAtPosition(Position position);
 
-    void processInstruction(TaquinBoardInstruction instruction, TaquinCell target);
+    public abstract void processInstruction(TaquinBoardInstruction instruction, TaquinCell target);
 
-    TaquinCell getNeighbor(TaquinBoardDirection direction, TaquinCell target);
+    public abstract TaquinCell getNeighbor(TaquinBoardDirection direction, TaquinCell target);
 
-    void addCell(TaquinCell cell);
+    public abstract void addCell(TaquinCell cell);
 
-    TaquinCell getEmptyPosition();
+    public abstract TaquinCell getEmptyPosition();
 
-    TaquinBoardState copy();
+    public abstract TaquinBoardState copy(CellFactory taquinCellFactory);
 
-    boolean isGoalState();
+    public abstract boolean isGoalState();
 }

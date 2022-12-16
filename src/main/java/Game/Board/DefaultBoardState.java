@@ -1,12 +1,13 @@
 package Game.Board;
 
+import Game.Cell.CellFactory;
 import Game.Cell.Position;
 import Game.Cell.TaquinCell;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class DefaultBoardState implements TaquinBoardState {
+public class DefaultBoardState extends TaquinBoardState {
 
     private final int size;
 
@@ -23,13 +24,19 @@ public class DefaultBoardState implements TaquinBoardState {
         }
     }
 
-    public DefaultBoardState(DefaultBoardState boardState) {
+    public DefaultBoardState(DefaultBoardState boardState, CellFactory taquinCellFactory) {
         this.size = boardState.size;
         for (int i = 0; i < size; i++) {
             boardImplementation.add(new ArrayList<>(size));
             for (int j = 0; j < size; j++) {
-                // This ensures that we can set cells to specific positions when they are first inserted
-                setAtPosition(new Position(j, i), boardState.getAtPosition(j, i));
+                var toCopy = boardState.getAtPosition(j, i);
+                boardImplementation.get(i).add(
+                        taquinCellFactory.createTaquinCell(
+                                toCopy.getCellId(),
+                                toCopy.getPosition().getX(),
+                                toCopy.getPosition().getY()
+                        )
+                );
             }
         }
     }
@@ -94,8 +101,8 @@ public class DefaultBoardState implements TaquinBoardState {
     }
 
     @Override
-    public TaquinBoardState copy() {
-        return new DefaultBoardState(this);
+    public TaquinBoardState copy(CellFactory taquinCellFactory) {
+        return new DefaultBoardState(this, taquinCellFactory);
     }
 
     @Override
@@ -119,11 +126,14 @@ public class DefaultBoardState implements TaquinBoardState {
                 var evaluating = getAtPosition(x, y);
                 if (evaluating.getCellId() < lastSeenValue) {
                     return false;
+                } else if (x == getSize() - 1 && y == getSize() - 1) {
+                    return evaluating.isEmpty();
                 }
+                lastSeenValue = evaluating.getCellId();
             }
         }
 
-        return boardImplementation.get(getSize() - 1).get(getSize() - 1).isEmpty();
+        throw new IllegalStateException("Invalid configuration when checking goal test");
     }
 
     @Override
@@ -137,5 +147,17 @@ public class DefaultBoardState implements TaquinBoardState {
     @Override
     public int hashCode() {
         return Objects.hash(size, boardImplementation);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < getSize(); i++) {
+            for (int j = 0; j < getSize(); j++) {
+                stringBuilder.append(getAtPosition(j, i).getRepresentation()).append(", ");
+            }
+            stringBuilder.append('\n');
+        }
+        return stringBuilder.toString();
     }
 }
