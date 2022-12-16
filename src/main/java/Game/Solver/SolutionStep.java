@@ -23,11 +23,11 @@ public record SolutionStep(TaquinBoardState state,
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SolutionStep that = (SolutionStep) o;
-        return depth == that.depth && Objects.equals(state, that.state);
+        return Objects.equals(state, that.state);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(state, depth);
+        return Objects.hash(state);
     }
 }

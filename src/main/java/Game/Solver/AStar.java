@@ -9,7 +9,7 @@ import Game.Solver.Heuristic.Heuristic;
 import java.util.*;
 
 public class AStar extends TaquinSolutionAlgorithm {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     /*
      * So we need to implement a solution to the Taquin Puzzle using search algorithms
