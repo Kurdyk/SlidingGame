@@ -111,11 +111,12 @@ public class TaquinController implements Initializable {
         System.out.println("Solving:");
         System.out.println(board.getBoardState().toString());
 
+        var targetBoard = new TargetBoardState(Integer.parseInt(this.sizeField.getText()));
+        System.out.println(targetBoard);
+
         var heuristic = switch (chosenHeuristic) {
-            case "Manhattan Distance" ->
-                    new ManhattanDistanceHeuristic(new TargetBoardState(Integer.parseInt(this.sizeField.getText())));
-            case "Displacement" ->
-                    new DisplacedTilesHeuristic(new TargetBoardState(Integer.parseInt(this.sizeField.getText())));
+            case "Manhattan Distance" -> new ManhattanDistanceHeuristic(targetBoard);
+            case "Displacement" -> new DisplacedTilesHeuristic(targetBoard);
             default -> new UniformCostHeuristic();
         };
 

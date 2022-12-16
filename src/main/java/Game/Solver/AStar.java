@@ -6,7 +6,10 @@ import Game.Board.TaquinBoardState;
 import Game.Cell.CellFactory;
 import Game.Solver.Heuristic.Heuristic;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.PriorityQueue;
 
 public class AStar extends TaquinSolutionAlgorithm {
 
@@ -31,19 +34,15 @@ public class AStar extends TaquinSolutionAlgorithm {
      * */
 
     private final PriorityQueue<SolutionStep> states;
-    private final HashSet<Integer> seenStates;
+    private final HashSet<SolutionStep> seenStates;
     private final CellFactory cellFactory;
     private final boolean logProgress;
+    private final Heuristic heuristic;
 
     public AStar(Heuristic heuristic, CellFactory cellFactory, boolean logProgress) {
+        this.heuristic = heuristic;
         this.cellFactory = cellFactory;
-        var stateComparator = new Comparator<SolutionStep>() {
-            @Override
-            public int compare(SolutionStep o1, SolutionStep o2) {
-                return heuristic.getHeuristicValue(o1) - heuristic.getHeuristicValue(o2);
-            }
-        };
-        states = new PriorityQueue<>(stateComparator);
+        states = new PriorityQueue<>();
         seenStates = new HashSet<>();
         this.logProgress = logProgress;
     }
@@ -52,15 +51,14 @@ public class AStar extends TaquinSolutionAlgorithm {
     public List<SolutionStep> solve(TaquinBoardState initialState) {
         var initialStep = new SolutionStep(initialState, null, null, 0);
         states.add(initialStep);
+        seenStates.add(initialStep);
 
         if (logProgress) {
             System.out.println("Start Solve!");
         }
 
         while (!states.isEmpty()) {
-            var currentState = states.remove();
-
-            seenStates.add(currentState.state().hashCode());
+            var currentState = states.poll();
 
             if (logProgress) {
                 System.out.println("evaluating current state");
@@ -92,19 +90,29 @@ public class AStar extends TaquinSolutionAlgorithm {
                     continue;
                 }
 
-                if (seenStates.contains(newBoardState.hashCode())) {
-                    if (logProgress) {
-                        System.out.println("State has been seen, skipping");
-                    }
+                var newDistance = currentState.depth() + 1;
+                var solutionStep = new SolutionStep(newBoardState, currentState, instruction, newDistance);
+                solutionStep.setHeuristicValue(heuristic.getHeuristicValue(solutionStep));
+
+                // Totally new node, just add it to the queue
+                if (!seenStates.contains(solutionStep)) {
+                    seenStates.add(solutionStep);
+                    states.add(solutionStep);
                     continue;
                 }
 
-                var solutionStep = new SolutionStep(newBoardState, currentState, instruction, currentState.depth() + 1);
-                states.add(solutionStep);
+                // We have seen this node, check if we have found a shorter route
+                boolean updated = states.removeIf(
+                        step -> step.state() == solutionStep.state()
+                                && step.getHeuristicValue() > solutionStep.getHeuristicValue()
+                );
+                if (updated) {
+                    states.add(solutionStep);
+                }
+
             }
         }
 
         return Collections.emptyList();
     }
-
 }
