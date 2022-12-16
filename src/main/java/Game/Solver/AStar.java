@@ -9,7 +9,7 @@ import Game.Solver.Heuristic.Heuristic;
 import java.util.*;
 
 public class AStar extends TaquinSolutionAlgorithm {
-    private static final boolean DEBUG = false;
+
 
     /*
      * So we need to implement a solution to the Taquin Puzzle using search algorithms
@@ -31,10 +31,11 @@ public class AStar extends TaquinSolutionAlgorithm {
      * */
 
     private final PriorityQueue<SolutionStep> states;
-    private final HashSet<SolutionStep> seenStates;
+    private final HashSet<Integer> seenStates;
     private final CellFactory cellFactory;
+    private final boolean logProgress;
 
-    public AStar(Heuristic heuristic, CellFactory cellFactory) {
+    public AStar(Heuristic heuristic, CellFactory cellFactory, boolean logProgress) {
         this.cellFactory = cellFactory;
         var stateComparator = new Comparator<SolutionStep>() {
             @Override
@@ -44,6 +45,7 @@ public class AStar extends TaquinSolutionAlgorithm {
         };
         states = new PriorityQueue<>(stateComparator);
         seenStates = new HashSet<>();
+        this.logProgress = logProgress;
     }
 
     @Override
@@ -51,22 +53,18 @@ public class AStar extends TaquinSolutionAlgorithm {
         var initialStep = new SolutionStep(initialState, null, null, 0);
         states.add(initialStep);
 
-        if (DEBUG) {
+        if (logProgress) {
             System.out.println("Start Solve!");
         }
 
         while (!states.isEmpty()) {
             var currentState = states.remove();
-            if (seenStates.contains(currentState)) {
-                if (DEBUG) {
-                    System.out.println("State has been seen, skipping");
-                }
-                continue;
-            }
 
-            if (DEBUG) {
+            seenStates.add(currentState.state().hashCode());
+
+            if (logProgress) {
                 System.out.println("evaluating current state");
-                System.out.println(currentState.state().toString());
+                System.out.println(currentState.state());
             }
 
             if (currentState.state().isGoalState()) {
@@ -74,7 +72,7 @@ public class AStar extends TaquinSolutionAlgorithm {
             }
 
             for (TaquinBoardDirection direction : TaquinBoardDirection.values()) {
-                if (DEBUG) {
+                if (logProgress) {
                     System.out.println("Generating new state from direction: " + direction);
                 }
                 var newBoardState = currentState.state().copy(cellFactory);
@@ -82,11 +80,21 @@ public class AStar extends TaquinSolutionAlgorithm {
                 var instruction = TaquinBoardInstruction.mapFromDirection(direction);
                 try {
                     newBoardState.processInstruction(instruction, emptyPosition);
+                    if (logProgress) {
+                        System.out.println(newBoardState);
+                    }
                 } catch (IndexOutOfBoundsException exception) {
                     // It is normal to see this exception as we try each direction
                     // An optimization would be to not try invalid directions
-                    if (DEBUG) {
+                    if (logProgress) {
                         System.out.println("Direction is invalid");
+                    }
+                    continue;
+                }
+
+                if (seenStates.contains(newBoardState.hashCode())) {
+                    if (logProgress) {
+                        System.out.println("State has been seen, skipping");
                     }
                     continue;
                 }
@@ -94,13 +102,8 @@ public class AStar extends TaquinSolutionAlgorithm {
                 var solutionStep = new SolutionStep(newBoardState, currentState, instruction, currentState.depth() + 1);
                 states.add(solutionStep);
             }
-
-            seenStates.add(currentState);
         }
 
-        if (DEBUG) {
-            System.out.println("Failed to find a solution");
-        }
         return Collections.emptyList();
     }
 

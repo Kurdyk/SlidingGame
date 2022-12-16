@@ -1,7 +1,5 @@
 package Game.Cell;
 
-import java.util.Objects;
-
 public class Position {
     private int x;
     private int y;
@@ -37,6 +35,8 @@ public class Position {
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        int result = x;
+        result = 31 * result + y;
+        return result;
     }
 }

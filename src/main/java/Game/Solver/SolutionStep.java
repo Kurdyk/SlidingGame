@@ -28,6 +28,6 @@ public record SolutionStep(TaquinBoardState state,
 
     @Override
     public int hashCode() {
-        return Objects.hash(state);
+        return state.hashCode();
     }
 }
