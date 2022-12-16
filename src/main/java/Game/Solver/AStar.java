@@ -3,10 +3,13 @@ package Game.Solver;
 import Game.Board.TaquinBoardDirection;
 import Game.Board.TaquinBoardInstruction;
 import Game.Board.TaquinBoardState;
+import Game.Cell.CellFactory;
+import Game.Solver.Heuristic.Heuristic;
 
 import java.util.*;
 
-public class AStar {
+public class AStar extends TaquinSolutionAlgorithm {
+    private static final boolean DEBUG = true;
 
     /*
      * So we need to implement a solution to the Taquin Puzzle using search algorithms
@@ -27,72 +30,78 @@ public class AStar {
      *  then iterate through the cells and calculate the Heuristic for each cell, and return the sum
      * */
 
-
     private final PriorityQueue<SolutionStep> states;
-    private final HashSet<TaquinBoardState> seenStates;
+    private final HashSet<SolutionStep> seenStates;
+    private final CellFactory cellFactory;
 
-    public AStar(Heuristic heuristic) {
+    public AStar(Heuristic heuristic, CellFactory cellFactory) {
+        this.cellFactory = cellFactory;
         var stateComparator = new Comparator<SolutionStep>() {
             @Override
             public int compare(SolutionStep o1, SolutionStep o2) {
-                return heuristic.getHeuristicValue(o1.getState()) - heuristic.getHeuristicValue(o2.getState());
+                return heuristic.getHeuristicValue(o1) - heuristic.getHeuristicValue(o2);
             }
         };
         states = new PriorityQueue<>(stateComparator);
         seenStates = new HashSet<>();
     }
 
+    @Override
     public List<SolutionStep> solve(TaquinBoardState initialState) {
-        var initialStep = new SolutionStep(initialState, null, null);
+        var initialStep = new SolutionStep(initialState, null, null, 0);
         states.add(initialStep);
+
+        if (DEBUG) {
+            System.out.println("Start Solve!");
+        }
 
         while (!states.isEmpty()) {
             var currentState = states.remove();
+            if (seenStates.contains(currentState)) {
+                if (DEBUG) {
+                    System.out.println("State has been seen, skipping");
+                }
+                continue;
+            }
 
-            if (currentState.getState().isGoalState()) {
+            if (DEBUG) {
+                System.out.println("evaluating current state");
+                System.out.println(currentState.state().toString());
+            }
+
+            if (currentState.state().isGoalState()) {
                 return unwindSolutionTree(currentState);
             }
 
-            // For each possible move in the board, we need to have a new board state instance after the move
-            // So we need a way to clone board states, and then apply moves to each board state
-            // We also need a way to iterate over the possible moves
-            var emptyPosition = currentState.getState().getEmptyPosition();
             for (TaquinBoardDirection direction : TaquinBoardDirection.values()) {
-                var newBoardState = currentState.getState().copy();
+                if (DEBUG) {
+                    System.out.println("Generating new state from direction: " + direction);
+                }
+                var newBoardState = currentState.state().copy(cellFactory);
+                var emptyPosition = newBoardState.getEmptyPosition();
                 var instruction = TaquinBoardInstruction.mapFromDirection(direction);
                 try {
                     newBoardState.processInstruction(instruction, emptyPosition);
-                } catch (IllegalStateException exception) {
+                } catch (IndexOutOfBoundsException exception) {
                     // It is normal to see this exception as we try each direction
                     // An optimization would be to not try invalid directions
+                    if (DEBUG) {
+                        System.out.println("Direction is invalid");
+                    }
                     continue;
                 }
 
-                if (seenStates.contains(newBoardState)) {
-                    // What should we do here? Is this in the right spot?
-                    continue;
-                }
-
-                var solutionStep = new SolutionStep(newBoardState, currentState, instruction);
-
+                var solutionStep = new SolutionStep(newBoardState, currentState, instruction, currentState.depth() + 1);
                 states.add(solutionStep);
             }
 
-            seenStates.add(currentState.getState());
+            seenStates.add(currentState);
         }
 
+        if (DEBUG) {
+            System.out.println("Failed to find a solution");
+        }
         return Collections.emptyList();
-    }
-
-    private List<SolutionStep> unwindSolutionTree(SolutionStep terminalNode) {
-        var iterator = terminalNode;
-        var instructions = new ArrayList<SolutionStep>();
-        do {
-            instructions.add(iterator);
-            iterator = iterator.getParentState();
-        }
-        while (iterator.getParentState() != null);
-        return instructions;
     }
 
 }
