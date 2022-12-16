@@ -19,6 +19,8 @@ public abstract class TaquinBoardState {
 
     public abstract TaquinCell getEmptyPosition();
 
+    public abstract Position getPositionOfCell(int id);
+
     public abstract TaquinBoardState copy(CellFactory taquinCellFactory);
 
     public abstract boolean isGoalState();

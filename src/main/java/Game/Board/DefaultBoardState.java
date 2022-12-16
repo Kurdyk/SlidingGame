@@ -119,6 +119,19 @@ public class DefaultBoardState extends TaquinBoardState {
     }
 
     @Override
+    public Position getPositionOfCell(int id) {
+        for (int y = 0; y < getSize(); y++) {
+            for (int x = 0; x < getSize(); x++) {
+                if (getAtPosition(x, y).getCellId() == id) {
+                    return getAtPosition(x, y).getPosition();
+                }
+            }
+        }
+
+        throw new IllegalStateException("Board is missing cell of id " + id);
+    }
+
+    @Override
     public boolean isGoalState() {
         var lastSeenValue = getAtPosition(0, 0).getCellId();
         for (int y = 0; y < getSize(); y++) {

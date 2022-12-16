@@ -5,7 +5,7 @@ import Game.Board.DefaultBoardState;
 import Game.Board.TargetBoardState;
 import Game.Cell.DefaultCellFactory;
 import Game.Solver.AStar;
-import Game.Solver.Heuristic.DisplacedTilesHeuristic;
+import Game.Solver.Heuristic.ManhattanDistanceHeuristic;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -90,10 +90,12 @@ public class TaquinController implements Initializable {
 
     @FXML
     private void onSolveClick() {
-        var heuristic = new DisplacedTilesHeuristic(new TargetBoardState(Integer.parseInt(this.sizeField.getText())));
+        var heuristic = new ManhattanDistanceHeuristic(new TargetBoardState(Integer.parseInt(this.sizeField.getText())));
         var solution = board.solve(new AStar(heuristic, new DefaultCellFactory()));
         for (var step : solution) {
             System.out.println("Instruction: " + step.instruction());
         }
+        board.setBoardState(solution.get(solution.size() - 1).state());
+        updateBoard();
     }
 }
