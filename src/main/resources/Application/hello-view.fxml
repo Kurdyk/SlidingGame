@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
+<?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
+<?import java.lang.String?>
 <TilePane xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" xmlns="http://javafx.com/javafx/19"
           fx:controller="Application.TaquinController">
-    <children>
-        <GridPane fx:id="boardDisplay" alignment="CENTER" maxHeight="1.7976931348623157E308"
-                  maxWidth="1.7976931348623157E308">
+    <HBox alignment="CENTER" spacing="20.0">
+        <GridPane fx:id="boardDisplay" alignment="CENTER">
             <columnConstraints>
                 <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
             </columnConstraints>
@@ -16,12 +18,19 @@
                 <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
             </rowConstraints>
         </GridPane>
-        <VBox fx:id="buttonBox" alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0" spacing="60.0">
-            <children>
-                <Button fx:id="solveButton" mnemonicParsing="false" text="Solve" onAction="#onSolveClick"/>
-                <Button fx:id="newGameButton" mnemonicParsing="false" onAction="#onNewGameClick" text="New game"/>
-                <TextField fx:id="sizeField" maxWidth="100.0" promptText="Game size" text="3"/>
-            </children>
+        <VBox fx:id="buttonBox" alignment="CENTER_RIGHT" spacing="10.0">
+            <ComboBox fx:id="heuristicCombo" promptText="Choose Heuristic">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Uniform Cost"/>
+                        <String fx:value="Displacement"/>
+                        <String fx:value="Manhattan Distance"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <Button fx:id="solveButton" mnemonicParsing="false" text="Solve" onAction="#onSolveClick"/>
+            <Button fx:id="newGameButton" mnemonicParsing="false" onAction="#onNewGameClick" text="New game"/>
+            <TextField fx:id="sizeField" maxWidth="100.0" promptText="Game size" text="3"/>
         </VBox>
-    </children>
+    </HBox>
 </TilePane>
