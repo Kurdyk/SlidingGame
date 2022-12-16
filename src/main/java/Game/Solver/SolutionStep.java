@@ -3,27 +3,31 @@ package Game.Solver;
 import Game.Board.TaquinBoardInstruction;
 import Game.Board.TaquinBoardState;
 
-public class SolutionStep {
-    private TaquinBoardState state;
-    private SolutionStep parentState;
-    private TaquinBoardInstruction instruction;
+import java.util.Objects;
+
+public record SolutionStep(TaquinBoardState state,
+                           Game.Solver.SolutionStep parentState,
+                           TaquinBoardInstruction instruction,
+                           int depth) {
 
 
-    public SolutionStep(TaquinBoardState state, SolutionStep parentState, TaquinBoardInstruction instruction) {
-        this.state = state;
-        this.parentState = parentState;
-        this.instruction = instruction;
+    /*
+     * Note: Ellington
+     * I am purposefully not including the parent state when evaluating the equals of two steps.
+     * I am also not sure if we need to include the insturction
+     *
+     * */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SolutionStep that = (SolutionStep) o;
+        return Objects.equals(state, that.state);
     }
 
-    public TaquinBoardState getState() {
-        return state;
-    }
-
-    public SolutionStep getParentState() {
-        return parentState;
-    }
-
-    public TaquinBoardInstruction getInstruction() {
-        return instruction;
+    @Override
+    public int hashCode() {
+        return Objects.hash(state);
     }
 }

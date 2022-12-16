@@ -2,11 +2,17 @@ package Application;
 
 import Game.Board.Board;
 import Game.Board.DefaultBoardState;
+import Game.Board.TargetBoardState;
 import Game.Cell.DefaultCellFactory;
+import Game.Solver.AStar;
+import Game.Solver.Heuristic.DisplacedTilesHeuristic;
+import Game.Solver.Heuristic.ManhattanDistanceHeuristic;
+import Game.Solver.Heuristic.UniformCostHeuristic;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -25,6 +31,10 @@ public class TaquinController implements Initializable {
 
     @FXML
     private TextField sizeField;
+
+    @FXML
+    private ComboBox<String> heuristicCombo;
+    private String chosenHeuristic = "";
 
     private void updateBoard() {
         for (int x = 0; x < this.board.getSize(); x++) {
@@ -69,6 +79,11 @@ public class TaquinController implements Initializable {
         DefaultBoardState boardState = new DefaultBoardState(Integer.parseInt(this.sizeField.getText()));
         this.board = new Board(boardState, new DefaultCellFactory());
         this.boardDisplay.resize(100 * this.board.getSize(), 100 * this.board.getSize());
+
+        this.heuristicCombo.getSelectionModel().selectedItemProperty().addListener(
+                (observableValue, s, newValue) -> chosenHeuristic = newValue
+        );
+
         this.updateBoard();
     }
 
@@ -87,9 +102,19 @@ public class TaquinController implements Initializable {
 
     @FXML
     private void onSolveClick() {
-        // TODO: here we will choose the Heuristic we want to use
-        var solution_instructions = this.board.solve();
+        var heuristic = switch (chosenHeuristic) {
+            case "Manhattan Distance" ->
+                    new ManhattanDistanceHeuristic(new TargetBoardState(Integer.parseInt(this.sizeField.getText())));
+            case "Displacement" ->
+                    new DisplacedTilesHeuristic(new TargetBoardState(Integer.parseInt(this.sizeField.getText())));
+            default -> new UniformCostHeuristic();
+        };
 
-        //TODO replay the solution instructions as operations on the board
+        var solution = board.solve(new AStar(heuristic, new DefaultCellFactory()));
+        for (var step : solution) {
+            System.out.println("Instruction: " + step.instruction());
+        }
+        board.setBoardState(solution.get(solution.size() - 1).state());
+        updateBoard();
     }
 }

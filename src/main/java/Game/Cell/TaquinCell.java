@@ -4,8 +4,7 @@ import java.util.Objects;
 
 public abstract class TaquinCell {
 
-    public static int BLANK_ID = -1;
-    public static int INVALID_POS = -1;
+    public static int BLANK_ID = Integer.MAX_VALUE;
 
     private final int id;
     private Position position;
