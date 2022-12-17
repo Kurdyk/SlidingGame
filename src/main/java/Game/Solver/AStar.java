@@ -44,6 +44,10 @@ public class AStar extends TaquinSolutionAlgorithm {
 
     @Override
     public List<SolutionStep> solve(TaquinBoardState initialState) {
+        if (!isSolvable(initialState)) {
+            return Collections.emptyList();
+        }
+
         var states = new PriorityQueue<SolutionStep>(1000);
         var seenStates = new HashSet<SolutionStep>();
 
@@ -91,18 +95,11 @@ public class AStar extends TaquinSolutionAlgorithm {
                 if (!seenStates.contains(solutionStep)) {
                     seenStates.add(solutionStep);
                     states.add(solutionStep);
-                    continue;
                 }
+            }
 
-                // We have seen this node, check if we have found a shorter route
-                boolean updated = states.removeIf(
-                        step -> step.state() == solutionStep.state()
-                                && step.depth() > solutionStep.depth()
-                );
-                if (updated) {
-                    states.add(solutionStep);
-                }
-
+            if (states.size() % 10000 == 0) {
+                System.out.println("Frontier is now at: " + states.size());
             }
         }
 
