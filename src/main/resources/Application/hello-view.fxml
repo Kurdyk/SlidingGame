@@ -23,6 +23,7 @@
                         <String fx:value="Uniform Cost"/>
                         <String fx:value="Displacement"/>
                         <String fx:value="Manhattan Distance"/>
+                        <String fx:value="Linear Conflict + M.D."/>
                     </FXCollections>
                 </items>
             </ComboBox>

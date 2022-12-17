@@ -6,6 +6,7 @@ import Game.Board.TargetBoardState;
 import Game.Cell.DefaultCellFactory;
 import Game.Solver.AStar;
 import Game.Solver.Heuristic.DisplacedTilesHeuristic;
+import Game.Solver.Heuristic.LinearConflictHeuristic;
 import Game.Solver.Heuristic.ManhattanDistanceHeuristic;
 import Game.Solver.Heuristic.UniformCostHeuristic;
 import javafx.fxml.FXML;
@@ -117,6 +118,7 @@ public class TaquinController implements Initializable {
         var heuristic = switch (chosenHeuristic) {
             case "Manhattan Distance" -> new ManhattanDistanceHeuristic(targetBoard);
             case "Displacement" -> new DisplacedTilesHeuristic(targetBoard);
+            case "Linear Conflict + M.D." -> new LinearConflictHeuristic(targetBoard);
             default -> new UniformCostHeuristic();
         };
 
