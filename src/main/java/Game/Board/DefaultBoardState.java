@@ -85,16 +85,26 @@ public class DefaultBoardState extends TaquinBoardState {
 
     @Override
     public TaquinCell getNeighbor(TaquinBoardDirection direction, TaquinCell target) {
-        Position neighborPosition;
+        TaquinCell neighbor;
         Position currentPosition = target.getPosition();
         switch (direction) {
-            case UP -> neighborPosition = new Position(currentPosition.getX(), currentPosition.getY() - 1);
-            case RIGHT -> neighborPosition = new Position(currentPosition.getX() + 1, currentPosition.getY());
-            case DOWN -> neighborPosition = new Position(currentPosition.getX(), currentPosition.getY() + 1);
-            case LEFT -> neighborPosition = new Position(currentPosition.getX() - 1, currentPosition.getY());
+            case UP -> neighbor = getAtPosition(currentPosition.getX(), currentPosition.getY() - 1);
+            case RIGHT -> neighbor = getAtPosition(currentPosition.getX() + 1, currentPosition.getY());
+            case DOWN -> neighbor = getAtPosition(currentPosition.getX(), currentPosition.getY() + 1);
+            case LEFT -> neighbor = getAtPosition(currentPosition.getX() - 1, currentPosition.getY());
             default -> throw new IllegalStateException("Unexpected value: " + direction);
         }
-        return getAtPosition(neighborPosition);
+        return neighbor;
+    }
+
+    @Override
+    public boolean hasNeighbor(TaquinBoardDirection direction, TaquinCell target) {
+        try {
+            getNeighbor(direction, target);
+            return true;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
     }
 
     @Override
@@ -151,7 +161,15 @@ public class DefaultBoardState extends TaquinBoardState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultBoardState that = (DefaultBoardState) o;
-        return size == that.size && Arrays.deepEquals(boardImplementation, that.boardImplementation);
+        for (int y = 0; y < getSize(); y++) {
+            for (int x = 0; x < getSize(); x++) {
+                if (getAtPosition(x, y).getCellId() != that.getAtPosition(x, y).getCellId()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override

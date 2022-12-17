@@ -15,6 +15,8 @@ public abstract class TaquinBoardState {
 
     public abstract TaquinCell getNeighbor(TaquinBoardDirection direction, TaquinCell target);
 
+    public abstract boolean hasNeighbor(TaquinBoardDirection direction, TaquinCell target);
+
     public abstract void addCell(TaquinCell cell);
 
     public abstract TaquinCell getEmptyPosition();

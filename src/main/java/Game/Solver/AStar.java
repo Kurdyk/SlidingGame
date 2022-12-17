@@ -32,9 +32,6 @@ public class AStar extends TaquinSolutionAlgorithm {
      *  So each board state instance needs to take a Heuristic as an argument,
      *  then iterate through the cells and calculate the Heuristic for each cell, and return the sum
      * */
-
-    private final PriorityQueue<SolutionStep> states;
-    private final HashSet<SolutionStep> seenStates;
     private final CellFactory cellFactory;
     private final boolean logProgress;
     private final Heuristic heuristic;
@@ -42,13 +39,14 @@ public class AStar extends TaquinSolutionAlgorithm {
     public AStar(Heuristic heuristic, CellFactory cellFactory, boolean logProgress) {
         this.heuristic = heuristic;
         this.cellFactory = cellFactory;
-        states = new PriorityQueue<>();
-        seenStates = new HashSet<>();
         this.logProgress = logProgress;
     }
 
     @Override
     public List<SolutionStep> solve(TaquinBoardState initialState) {
+        var states = new PriorityQueue<SolutionStep>(1000);
+        var seenStates = new HashSet<SolutionStep>();
+
         var initialStep = new SolutionStep(initialState, null, null, 0);
         states.add(initialStep);
         seenStates.add(initialStep);
@@ -70,24 +68,19 @@ public class AStar extends TaquinSolutionAlgorithm {
             }
 
             for (TaquinBoardDirection direction : TaquinBoardDirection.values()) {
+                if (!currentState.state().hasNeighbor(direction, currentState.state().getEmptyPosition())) {
+                    continue;
+                }
                 if (logProgress) {
                     System.out.println("Generating new state from direction: " + direction);
                 }
                 var newBoardState = currentState.state().copy(cellFactory);
                 var emptyPosition = newBoardState.getEmptyPosition();
                 var instruction = TaquinBoardInstruction.mapFromDirection(direction);
-                try {
-                    newBoardState.processInstruction(instruction, emptyPosition);
-                    if (logProgress) {
-                        System.out.println(newBoardState);
-                    }
-                } catch (IndexOutOfBoundsException exception) {
-                    // It is normal to see this exception as we try each direction
-                    // An optimization would be to not try invalid directions
-                    if (logProgress) {
-                        System.out.println("Direction is invalid");
-                    }
-                    continue;
+                newBoardState.processInstruction(instruction, emptyPosition);
+                if (logProgress) {
+                    System.out.println("Instruction: " + direction);
+                    System.out.println(newBoardState);
                 }
 
                 var newDistance = currentState.depth() + 1;
@@ -104,7 +97,7 @@ public class AStar extends TaquinSolutionAlgorithm {
                 // We have seen this node, check if we have found a shorter route
                 boolean updated = states.removeIf(
                         step -> step.state() == solutionStep.state()
-                                && step.getHeuristicValue() > solutionStep.getHeuristicValue()
+                                && step.depth() > solutionStep.depth()
                 );
                 if (updated) {
                     states.add(solutionStep);
