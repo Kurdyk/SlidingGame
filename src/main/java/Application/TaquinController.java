@@ -34,7 +34,10 @@ public class TaquinController implements Initializable {
 
     @FXML
     private ComboBox<String> heuristicCombo;
+    @FXML
+    private ComboBox<String> logCombo;
     private String chosenHeuristic = "";
+    private boolean withLogs = false;
 
     private void updateBoard() {
         for (int x = 0; x < this.board.getSize(); x++) {
@@ -83,6 +86,9 @@ public class TaquinController implements Initializable {
         this.heuristicCombo.getSelectionModel().selectedItemProperty().addListener(
                 (observableValue, s, newValue) -> chosenHeuristic = newValue
         );
+        this.logCombo.getSelectionModel().selectedItemProperty().addListener(
+                (observableValue, s, newValue) -> withLogs = !newValue.equals("No")
+        );
 
         this.updateBoard();
     }
@@ -102,15 +108,23 @@ public class TaquinController implements Initializable {
 
     @FXML
     private void onSolveClick() {
+        System.out.println("Solving:");
+        System.out.println(board.getBoardState().toString());
+
+        var targetBoard = new TargetBoardState(Integer.parseInt(this.sizeField.getText()));
+        System.out.println(targetBoard);
+
         var heuristic = switch (chosenHeuristic) {
-            case "Manhattan Distance" ->
-                    new ManhattanDistanceHeuristic(new TargetBoardState(Integer.parseInt(this.sizeField.getText())));
-            case "Displacement" ->
-                    new DisplacedTilesHeuristic(new TargetBoardState(Integer.parseInt(this.sizeField.getText())));
+            case "Manhattan Distance" -> new ManhattanDistanceHeuristic(targetBoard);
+            case "Displacement" -> new DisplacedTilesHeuristic(targetBoard);
             default -> new UniformCostHeuristic();
         };
 
-        var solution = board.solve(new AStar(heuristic, new DefaultCellFactory()));
+        var solution = board.solve(new AStar(heuristic, new DefaultCellFactory(), withLogs));
+        if (solution.isEmpty()) {
+            System.out.println("Failed to find solution");
+            return;
+        }
         for (var step : solution) {
             System.out.println("Instruction: " + step.instruction());
         }

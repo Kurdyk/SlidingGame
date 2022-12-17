@@ -4,38 +4,35 @@ import Game.Cell.CellFactory;
 import Game.Cell.Position;
 import Game.Cell.TaquinCell;
 
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Arrays;
 
 public class DefaultBoardState extends TaquinBoardState {
 
     private final int size;
 
-    private final ArrayList<ArrayList<TaquinCell>> boardImplementation = new ArrayList<>();
+    private final TaquinCell[][] boardImplementation;
 
     public DefaultBoardState(int size) {
         this.size = size;
+        boardImplementation = new TaquinCell[size][size];
         for (int i = 0; i < size; i++) {
-            boardImplementation.add(new ArrayList<>(size));
             for (int j = 0; j < size; j++) {
                 // This ensures that we can set cells to specific positions when they are first inserted
-                boardImplementation.get(i).add(null);
+                boardImplementation[i][j] = null;
             }
         }
     }
 
     public DefaultBoardState(DefaultBoardState boardState, CellFactory taquinCellFactory) {
         this.size = boardState.size;
+        boardImplementation = new TaquinCell[size][size];
         for (int i = 0; i < size; i++) {
-            boardImplementation.add(new ArrayList<>(size));
             for (int j = 0; j < size; j++) {
                 var toCopy = boardState.getAtPosition(j, i);
-                boardImplementation.get(i).add(
-                        taquinCellFactory.createTaquinCell(
-                                toCopy.getCellId(),
-                                toCopy.getPosition().getX(),
-                                toCopy.getPosition().getY()
-                        )
+                boardImplementation[i][j] = taquinCellFactory.createTaquinCell(
+                        toCopy.getCellId(),
+                        toCopy.getPosition().getX(),
+                        toCopy.getPosition().getY()
                 );
             }
         }
@@ -49,12 +46,12 @@ public class DefaultBoardState extends TaquinBoardState {
     @Override
     public void addCell(TaquinCell cell) {
         Position targetPosition = cell.getPosition();
-        boardImplementation.get(targetPosition.getY()).set(targetPosition.getX(), cell);
+        boardImplementation[targetPosition.getY()][targetPosition.getX()] = cell;
     }
 
     @Override
     public TaquinCell getAtPosition(int x, int y) {
-        return boardImplementation.get(y).get(x);
+        return boardImplementation[y][x];
     }
 
     @Override
@@ -63,7 +60,7 @@ public class DefaultBoardState extends TaquinBoardState {
     }
 
     private void setAtPosition(Position position, TaquinCell target) {
-        boardImplementation.get(position.getY()).set(position.getX(), target);
+        boardImplementation[position.getY()][position.getX()] = target;
     }
 
     @Override
@@ -88,16 +85,26 @@ public class DefaultBoardState extends TaquinBoardState {
 
     @Override
     public TaquinCell getNeighbor(TaquinBoardDirection direction, TaquinCell target) {
-        Position neighborPosition;
+        TaquinCell neighbor;
         Position currentPosition = target.getPosition();
         switch (direction) {
-            case UP -> neighborPosition = new Position(currentPosition.getX(), currentPosition.getY() - 1);
-            case RIGHT -> neighborPosition = new Position(currentPosition.getX() + 1, currentPosition.getY());
-            case DOWN -> neighborPosition = new Position(currentPosition.getX(), currentPosition.getY() + 1);
-            case LEFT -> neighborPosition = new Position(currentPosition.getX() - 1, currentPosition.getY());
+            case UP -> neighbor = getAtPosition(currentPosition.getX(), currentPosition.getY() - 1);
+            case RIGHT -> neighbor = getAtPosition(currentPosition.getX() + 1, currentPosition.getY());
+            case DOWN -> neighbor = getAtPosition(currentPosition.getX(), currentPosition.getY() + 1);
+            case LEFT -> neighbor = getAtPosition(currentPosition.getX() - 1, currentPosition.getY());
             default -> throw new IllegalStateException("Unexpected value: " + direction);
         }
-        return getAtPosition(neighborPosition);
+        return neighbor;
+    }
+
+    @Override
+    public boolean hasNeighbor(TaquinBoardDirection direction, TaquinCell target) {
+        try {
+            getNeighbor(direction, target);
+            return true;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
     }
 
     @Override
@@ -154,12 +161,20 @@ public class DefaultBoardState extends TaquinBoardState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultBoardState that = (DefaultBoardState) o;
-        return size == that.size && boardImplementation.equals(that.boardImplementation);
+        for (int y = 0; y < getSize(); y++) {
+            for (int x = 0; x < getSize(); x++) {
+                if (getAtPosition(x, y).getCellId() != that.getAtPosition(x, y).getCellId()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(size, boardImplementation);
+        return Arrays.deepHashCode(boardImplementation);
     }
 
     @Override

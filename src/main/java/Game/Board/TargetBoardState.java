@@ -18,9 +18,4 @@ public class TargetBoardState extends DefaultBoardState {
             }
         }
     }
-
-    @Override
-    public boolean isGoalState() {
-        return true;
-    }
 }

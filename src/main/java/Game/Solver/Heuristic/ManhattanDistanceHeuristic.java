@@ -24,8 +24,8 @@ public class ManhattanDistanceHeuristic extends Heuristic {
                 }
                 var targetPosition = targetBoardState.getPositionOfCell(evaluationCell.getCellId());
                 if (!evaluationCell.getPosition().equals(targetPosition)) {
-                    totalDistance += Math.abs(targetPosition.getX() - evaluationCell.getPosition().getX());
-                    totalDistance += Math.abs(targetPosition.getY() - evaluationCell.getPosition().getY());
+                    totalDistance += Math.abs(targetPosition.getX() - x)
+                            + Math.abs(targetPosition.getY() - y);
                 }
             }
         }

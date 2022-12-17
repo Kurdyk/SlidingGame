@@ -3,31 +3,82 @@ package Game.Solver;
 import Game.Board.TaquinBoardInstruction;
 import Game.Board.TaquinBoardState;
 
-import java.util.Objects;
+public final class SolutionStep implements Comparable<SolutionStep> {
+    private final TaquinBoardState state;
+    private final SolutionStep parentState;
+    private final TaquinBoardInstruction instruction;
+    private final int depth;
 
-public record SolutionStep(TaquinBoardState state,
-                           Game.Solver.SolutionStep parentState,
-                           TaquinBoardInstruction instruction,
-                           int depth) {
+    private int heuristicValue;
 
+    public SolutionStep(TaquinBoardState state,
+                        SolutionStep parentState,
+                        TaquinBoardInstruction instruction,
+                        int depth) {
+        this.state = state;
+        this.parentState = parentState;
+        this.instruction = instruction;
+        this.depth = depth;
+        this.heuristicValue = 0;
+    }
 
-    /*
-     * Note: Ellington
-     * I am purposefully not including the parent state when evaluating the equals of two steps.
-     * I am also not sure if we need to include the insturction
-     *
-     * */
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SolutionStep that = (SolutionStep) o;
-        return Objects.equals(state, that.state);
+        for (int y = 0; y < state.getSize(); y++) {
+            for (int x = 0; x < state.getSize(); x++) {
+                if (!state.getAtPosition(x, y).equals(that.state().getAtPosition(x, y))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(state);
+        return state.hashCode();
+    }
+
+    public TaquinBoardState state() {
+        return state;
+    }
+
+    public SolutionStep parentState() {
+        return parentState;
+    }
+
+    public TaquinBoardInstruction instruction() {
+        return instruction;
+    }
+
+    public int depth() {
+        return depth;
+    }
+
+    public int getHeuristicValue() {
+        return heuristicValue;
+    }
+
+    public void setHeuristicValue(int heuristicValue) {
+        this.heuristicValue = heuristicValue;
+    }
+
+    @Override
+    public String toString() {
+        return "SolutionStep[" +
+                "state=" + state + ", " +
+                "parentState=" + parentState + ", " +
+                "instruction=" + instruction + ", " +
+                "depth=" + depth + ']';
+    }
+
+    @Override
+    public int compareTo(SolutionStep o) {
+        return Integer.compare(heuristicValue, o.heuristicValue);
     }
 }
