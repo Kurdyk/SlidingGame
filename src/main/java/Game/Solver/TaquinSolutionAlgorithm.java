@@ -11,6 +11,11 @@ public abstract class TaquinSolutionAlgorithm {
     public abstract List<SolutionStep> solve(TaquinBoardState initialState);
 
     protected List<SolutionStep> unwindSolutionTree(SolutionStep terminalNode) {
+
+        if (terminalNode.parentState() == null) { // already solved
+            return null;
+        }
+
         var iterator = terminalNode;
         var instructions = new ArrayList<SolutionStep>();
         do {
@@ -46,6 +51,7 @@ public abstract class TaquinSolutionAlgorithm {
             }
         }
 
+        System.out.println("inversion : " + inversions);
         // Check if the puzzle is solvable
         if (n % 2 == 1) {
             // If n is odd, the puzzle is solvable if the number of inversions is even
@@ -55,7 +61,9 @@ public abstract class TaquinSolutionAlgorithm {
             // and the number of inversions is odd, or if the blank is on an even row counting from the bottom
             // and the number of inversions is even
             int blankRow = state.getEmptyPosition().getPosition().getY();
-            return (blankRow % 2 == 1 && inversions % 2 == 1) || (blankRow % 2 == 0 && inversions % 2 == 0);
+            int rowNumberFromBottom = state.getSize() - blankRow;
+            System.out.println("row number from bottom : " + rowNumberFromBottom);
+            return (rowNumberFromBottom % 2 == 1 && inversions % 2 == 0) || (rowNumberFromBottom % 2 == 0 && inversions % 2 == 1);
         }
     }
 }

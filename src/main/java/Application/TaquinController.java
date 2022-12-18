@@ -144,6 +144,10 @@ public class TaquinController implements Initializable {
         };
 
         var solution = board.solve(algorithm);
+        if (solution == null) {
+            System.out.println("Already solved");
+            return;
+        }
         if (solution.isEmpty()) {
             System.out.println("Failed to find solution");
             return;
