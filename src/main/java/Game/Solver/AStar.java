@@ -6,10 +6,7 @@ import Game.Board.TaquinBoardState;
 import Game.Cell.CellFactory;
 import Game.Solver.Heuristic.Heuristic;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class AStar extends TaquinSolutionAlgorithm {
 
@@ -45,6 +42,7 @@ public class AStar extends TaquinSolutionAlgorithm {
     @Override
     public List<SolutionStep> solve(TaquinBoardState initialState) {
         if (!isSolvable(initialState)) {
+            System.out.println("Cannot be solved");
             return Collections.emptyList();
         }
 

@@ -26,6 +26,13 @@
                         <String fx:value="Linear Conflict + M.D."/>
                     </FXCollections>
                 </items>
+            </ComboBox><ComboBox fx:id="algorithmCombo" promptText="Choose algorithm">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="A*"/>
+                        <String fx:value="IDA*"/>
+                    </FXCollections>
+                </items>
             </ComboBox>
             <ComboBox fx:id="logCombo" promptText="Log Progress?">
                 <items>
