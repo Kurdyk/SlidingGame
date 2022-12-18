@@ -9,6 +9,8 @@ import Game.Solver.Heuristic.DisplacedTilesHeuristic;
 import Game.Solver.Heuristic.LinearConflictHeuristic;
 import Game.Solver.Heuristic.ManhattanDistanceHeuristic;
 import Game.Solver.Heuristic.UniformCostHeuristic;
+import Game.Solver.IDAStar;
+import Game.Solver.TaquinSolutionAlgorithm;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -37,7 +39,11 @@ public class TaquinController implements Initializable {
     private ComboBox<String> heuristicCombo;
     @FXML
     private ComboBox<String> logCombo;
+    @FXML
+    private ComboBox<String> algorithmCombo;
+
     private String chosenHeuristic = "";
+    private String chosenAlgorithm = "";
     private boolean withLogs = false;
 
     private void updateBoard() {
@@ -87,6 +93,9 @@ public class TaquinController implements Initializable {
         this.heuristicCombo.getSelectionModel().selectedItemProperty().addListener(
                 (observableValue, s, newValue) -> chosenHeuristic = newValue
         );
+        this.algorithmCombo.getSelectionModel().selectedItemProperty().addListener(
+                (observableValue, s, newValue) -> chosenAlgorithm = newValue
+        );
         this.logCombo.getSelectionModel().selectedItemProperty().addListener(
                 (observableValue, s, newValue) -> withLogs = !newValue.equals("No")
         );
@@ -122,7 +131,12 @@ public class TaquinController implements Initializable {
             default -> new UniformCostHeuristic();
         };
 
-        var solution = board.solve(new AStar(heuristic, new DefaultCellFactory(), withLogs));
+        TaquinSolutionAlgorithm algorithm = switch (chosenAlgorithm) {
+            case "IDA*" -> new IDAStar(heuristic, new DefaultCellFactory(), withLogs);
+            default -> new AStar(heuristic, new DefaultCellFactory(), withLogs);
+        };
+
+        var solution = board.solve(algorithm);
         if (solution.isEmpty()) {
             System.out.println("Failed to find solution");
             return;
