@@ -41,6 +41,8 @@ public class TaquinController implements Initializable {
     private ComboBox<String> logCombo;
     @FXML
     private ComboBox<String> algorithmCombo;
+    @FXML
+    private TextField shuffleDepthField;
 
     private String chosenHeuristic = "";
     private String chosenAlgorithm = "";
@@ -106,14 +108,19 @@ public class TaquinController implements Initializable {
     @FXML
     private void onNewGameClick() {
         DefaultBoardState boardState = new DefaultBoardState(Integer.parseInt(this.sizeField.getText()));
-        this.board = new Board(boardState, new DefaultCellFactory());
+        String shuffleDepth = this.shuffleDepthField.getText();
+        if (shuffleDepth.equals("")) {
+            this.board = new Board(boardState, new DefaultCellFactory());
+        } else {
+            this.board = new Board(boardState, new DefaultCellFactory(), Integer.parseInt(shuffleDepth));
+        }
         this.boardDisplay.getChildren().removeIf(node -> GridPane.getRowIndex(node) >= Integer.parseInt(this.sizeField.getText()));
         this.boardDisplay.getChildren().removeIf(node -> GridPane.getColumnIndex(node) >= Integer.parseInt(this.sizeField.getText()));
         this.boardDisplay.resize(100 * this.board.getSize(), 100 * this.board.getSize());
         this.updateBoard();
         this.boardDisplay.getScene().getWindow().setHeight(this.boardDisplay.getHeight());
         this.boardDisplay.getScene().getWindow().setWidth(this.boardDisplay.getWidth() + 100);
-        System.out.println(this.board);
+//        System.out.println(this.board);
     }
 
     @FXML
@@ -137,6 +144,10 @@ public class TaquinController implements Initializable {
         };
 
         var solution = board.solve(algorithm);
+        if (solution == null) {
+            System.out.println("Already solved");
+            return;
+        }
         if (solution.isEmpty()) {
             System.out.println("Failed to find solution");
             return;
