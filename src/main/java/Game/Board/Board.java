@@ -28,6 +28,22 @@ public class Board {
 
     }
 
+    public Board(TaquinBoardState boardState, CellFactory cellFactory, ArrayList<ArrayList<Integer>> cellContent) {
+        this.boardState = boardState;
+        this.cellFactory = cellFactory;
+
+        for (int x = 0; x < this.boardState.getSize(); x++) {
+            for (int y = 0; y < this.boardState.getSize(); y++) {
+                Integer content = cellContent.get(x).get(y);
+                if (content == null) {
+                    this.boardState.addCell(this.cellFactory.createEmpty(y, x));
+                } else {
+                    this.boardState.addCell(this.cellFactory.createTaquinCell(content, y, x));
+                }
+            }
+        }
+    }
+
     public TaquinBoardState getBoardState() {
         return boardState;
     }
@@ -93,7 +109,7 @@ public class Board {
         Random random = new Random();
         int lastDirectionChoice = -1; // direction of the move of the empty tile
         for (int i = 0; i < numberOfMoves; i++) {
-            System.out.println("Shuffling step : " + i);
+            //System.out.println("Shuffling step : " + i);
             int choice = random.nextInt(4);
             if (lastDirectionChoice != -1  && choice == ~lastDirectionChoice) { // direction
                 choice = (choice + 1) % 4;

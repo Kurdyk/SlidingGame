@@ -11,6 +11,7 @@ import Game.Solver.Heuristic.ManhattanDistanceHeuristic;
 import Game.Solver.Heuristic.UniformCostHeuristic;
 import Game.Solver.IDAStar;
 import Game.Solver.TaquinSolutionAlgorithm;
+import Parser.NewLineParser;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -21,7 +22,11 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -43,6 +48,8 @@ public class TaquinController implements Initializable {
     private ComboBox<String> algorithmCombo;
     @FXML
     private TextField shuffleDepthField;
+    @FXML
+    private Button fileChooserButton;
 
     private String chosenHeuristic = "";
     private String chosenAlgorithm = "";
@@ -102,8 +109,7 @@ public class TaquinController implements Initializable {
                 (observableValue, s, newValue) -> withLogs = !newValue.equals("No")
         );
 
-        this.updateBoard();
-    }
+        this.updateBoard();    }
 
     @FXML
     private void onNewGameClick() {
@@ -114,12 +120,7 @@ public class TaquinController implements Initializable {
         } else {
             this.board = new Board(boardState, new DefaultCellFactory(), Integer.parseInt(shuffleDepth));
         }
-        this.boardDisplay.getChildren().removeIf(node -> GridPane.getRowIndex(node) >= Integer.parseInt(this.sizeField.getText()));
-        this.boardDisplay.getChildren().removeIf(node -> GridPane.getColumnIndex(node) >= Integer.parseInt(this.sizeField.getText()));
-        this.boardDisplay.resize(100 * this.board.getSize(), 100 * this.board.getSize());
-        this.updateBoard();
-        this.boardDisplay.getScene().getWindow().setHeight(this.boardDisplay.getHeight());
-        this.boardDisplay.getScene().getWindow().setWidth(this.boardDisplay.getWidth() + 100);
+        resizeWindow();
 //        System.out.println(this.board);
     }
 
@@ -157,5 +158,37 @@ public class TaquinController implements Initializable {
         }
         board.setBoardState(solution.get(solution.size() - 1).state());
         updateBoard();
+    }
+
+    @FXML
+    private void onFromFileClick() {
+
+        Stage stage = new Stage();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Find your game file");
+        File file = fileChooser.showOpenDialog(stage);
+        if (file == null) {
+            return;
+        }
+        NewLineParser newLineParser = new NewLineParser();
+        Board board;
+        try {
+            board = newLineParser.parseFile(file);
+        } catch (FileNotFoundException e) {
+            System.out.println("Error while reading the file");
+            return;
+        }
+        this.board = board;
+        this.sizeField.setText(String.valueOf(this.board.getSize()));
+        resizeWindow();
+    }
+
+    private void resizeWindow() {
+        this.boardDisplay.getChildren().removeIf(node -> GridPane.getRowIndex(node) >= Integer.parseInt(this.sizeField.getText()));
+        this.boardDisplay.getChildren().removeIf(node -> GridPane.getColumnIndex(node) >= Integer.parseInt(this.sizeField.getText()));
+        this.boardDisplay.resize(100 * this.board.getSize(), 100 * this.board.getSize());
+        this.updateBoard();
+        this.boardDisplay.getScene().getWindow().setHeight(this.boardDisplay.getHeight());
+        this.boardDisplay.getScene().getWindow().setWidth(this.boardDisplay.getWidth() + 100);
     }
 }
