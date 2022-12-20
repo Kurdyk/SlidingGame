@@ -53,6 +53,7 @@ public class IDAStar extends TaquinSolutionAlgorithm {
 
 
     private Pair<Integer, List<SolutionStep>> solveForBound(List<SolutionStep> path, int current_depth, int bound) {
+
         SolutionStep currentState = path.get(path.size() - 1);
         if (currentState.state().isGoalState()) { // found a solution
             return new Pair<>(-currentState.depth(), unwindSolutionTree(currentState));
@@ -67,17 +68,12 @@ public class IDAStar extends TaquinSolutionAlgorithm {
             if (!currentState.state().hasNeighbor(direction, currentState.state().getEmptyPosition())) {
                 continue;
             }
-            if (logProgress) {
-                System.out.println("Generating new state from direction: " + direction);
-            }
+
+
             var newBoardState = currentState.state().copy(cellFactory);
             var emptyPosition = newBoardState.getEmptyPosition();
             var instruction = TaquinBoardInstruction.mapFromDirection(direction);
             newBoardState.processInstruction(instruction, emptyPosition);
-            if (logProgress) {
-                System.out.println("Instruction: " + direction);
-                System.out.println(newBoardState);
-            }
 
             var newDistance = currentState.depth() + 1;
             var solutionStep = new SolutionStep(newBoardState, currentState, instruction, newDistance);

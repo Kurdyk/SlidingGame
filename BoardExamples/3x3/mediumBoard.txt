@@ -1,0 +1,4 @@
+# This is a medium board of 3x3
+6, 0, 2
+4, 3, ,
+5, 7, 1

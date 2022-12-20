@@ -46,6 +46,7 @@
             <Button fx:id="newGameButton" mnemonicParsing="false" onAction="#onNewGameClick" text="New game"/>
             <TextField fx:id="sizeField" maxWidth="100.0" promptText="Game size" text="3"/>
             <TextField fx:id="shuffleDepthField" maxWidth="100.0" promptText="Shuffle depth" text="50"/>
+            <Button fx:id="fileChooserButton" mnemonicParsing="false" onAction="#onFromFileClick" text="From file"/>
         </VBox>
     </HBox>
 </TilePane>
