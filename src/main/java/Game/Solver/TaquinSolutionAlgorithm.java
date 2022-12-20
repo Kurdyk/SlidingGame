@@ -62,7 +62,6 @@ public abstract class TaquinSolutionAlgorithm {
             // and the number of inversions is even
             int blankRow = state.getEmptyPosition().getPosition().getY();
             int rowNumberFromBottom = state.getSize() - blankRow;
-            System.out.println("row number from bottom : " + rowNumberFromBottom);
             return (rowNumberFromBottom % 2 == 1 && inversions % 2 == 0) || (rowNumberFromBottom % 2 == 0 && inversions % 2 == 1);
         }
     }

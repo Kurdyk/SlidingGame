@@ -96,7 +96,7 @@ public class Board {
             System.out.println("Shuffling step : " + i);
             int choice = random.nextInt(4);
             if (lastDirectionChoice != -1  && choice == ~lastDirectionChoice) { // direction
-                choice++;
+                choice = (choice + 1) % 4;
             }
             TaquinCell empty = boardState.getEmptyPosition();
             TaquinBoardDirection direction = switch (choice) {
