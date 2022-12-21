@@ -30,6 +30,17 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * This class connects our user interface defined in hello-view.fxml to the Taquin functionality.
+ * Our User interface is configurable along several parameters:
+ * - Board size via the sizeField text input
+ * - Chosen heuristic via the heuristic drop-down menu
+ * - Whether to print detailed logging information via the log drop-down menu
+ * - Chosen algorithm between A* and IDA* via the algorithm drop-down menu
+ * - The number of randomized actions to take from the goal state to produce a shuffled board
+ * <p>
+ * We use these fields to initialize our board and algorithm when the Solve button is pressed.
+ */
 public class TaquinController implements Initializable {
 
     private Board board;
@@ -48,50 +59,10 @@ public class TaquinController implements Initializable {
     private ComboBox<String> algorithmCombo;
     @FXML
     private TextField shuffleDepthField;
-    @FXML
-    private Button fileChooserButton;
 
     private String chosenHeuristic = "";
     private String chosenAlgorithm = "";
     private boolean withLogs = false;
-
-    private void updateBoard() {
-        for (int x = 0; x < this.board.getSize(); x++) {
-            for (int y = 0; y < this.board.getSize(); y++) {
-
-                Button button = new Button();
-                button.setAlignment(Pos.CENTER);
-                button.setMaxSize(50, 50);
-                button.setMinSize(50, 50);
-                button.setText(String.valueOf(this.board.getBoardState().getAtPosition(x, y).getRepresentation()));
-                int finalX = x;
-                int finalY = y;
-                button.setOnAction(event -> {
-                    this.board.move(finalX, finalY);
-                    updateBoard();
-                });
-
-                GridPane.setRowIndex(button, y);
-                GridPane.setColumnIndex(button, x);
-                this.boardDisplay.getChildren().add(button);
-            }
-
-        }
-
-        for (int j = 0; j < this.board.getSize(); j++) {
-            ColumnConstraints cc = new ColumnConstraints();
-            cc.setHgrow(Priority.ALWAYS);
-            this.boardDisplay.getColumnConstraints().add(cc);
-        }
-
-        for (int j = 0; j < this.board.getSize(); j++) {
-            RowConstraints rc = new RowConstraints();
-            rc.setVgrow(Priority.ALWAYS);
-            this.boardDisplay.getRowConstraints().add(rc);
-        }
-
-
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -109,7 +80,8 @@ public class TaquinController implements Initializable {
                 (observableValue, s, newValue) -> withLogs = !newValue.equals("No")
         );
 
-        this.updateBoard();    }
+        this.updateBoard();
+    }
 
     @FXML
     private void onNewGameClick() {
@@ -121,7 +93,6 @@ public class TaquinController implements Initializable {
             this.board = new Board(boardState, new DefaultCellFactory(), Integer.parseInt(shuffleDepth));
         }
         resizeWindow();
-//        System.out.println(this.board);
     }
 
     @FXML
@@ -190,5 +161,45 @@ public class TaquinController implements Initializable {
         this.updateBoard();
         this.boardDisplay.getScene().getWindow().setHeight(this.boardDisplay.getHeight());
         this.boardDisplay.getScene().getWindow().setWidth(this.boardDisplay.getWidth() + 100);
+    }
+
+    /**
+     * Helper method that takes the state of the board and renders the grid. Then attaches an action to each button
+     * which swaps its place with the empty tile if it is available
+     */
+    private void updateBoard() {
+        for (int x = 0; x < this.board.getSize(); x++) {
+            for (int y = 0; y < this.board.getSize(); y++) {
+
+                Button button = new Button();
+                button.setAlignment(Pos.CENTER);
+                button.setMaxSize(50, 50);
+                button.setMinSize(50, 50);
+                button.setText(String.valueOf(this.board.getBoardState().getAtPosition(x, y).getRepresentation()));
+                int finalX = x;
+                int finalY = y;
+                button.setOnAction(event -> {
+                    this.board.move(finalX, finalY);
+                    updateBoard();
+                });
+
+                GridPane.setRowIndex(button, y);
+                GridPane.setColumnIndex(button, x);
+                this.boardDisplay.getChildren().add(button);
+            }
+
+        }
+
+        for (int j = 0; j < this.board.getSize(); j++) {
+            ColumnConstraints cc = new ColumnConstraints();
+            cc.setHgrow(Priority.ALWAYS);
+            this.boardDisplay.getColumnConstraints().add(cc);
+        }
+
+        for (int j = 0; j < this.board.getSize(); j++) {
+            RowConstraints rc = new RowConstraints();
+            rc.setVgrow(Priority.ALWAYS);
+            this.boardDisplay.getRowConstraints().add(rc);
+        }
     }
 }

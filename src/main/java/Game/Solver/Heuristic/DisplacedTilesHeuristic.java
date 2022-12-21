@@ -12,7 +12,7 @@ public class DisplacedTilesHeuristic extends Heuristic {
     }
 
     @Override
-    public int getHeuristicValue(SolutionStep step) {
+    public int getResult(SolutionStep step) {
         int count = 0;
         var state = step.state();
         for (int y = 0; y < state.getSize(); y++) {

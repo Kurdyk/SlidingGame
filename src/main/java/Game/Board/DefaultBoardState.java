@@ -6,6 +6,14 @@ import Game.Cell.TaquinCell;
 
 import java.util.Arrays;
 
+/**
+ * Default implementation of TaquinBoardState.
+ * Stores the board in a two-dimensional array of TaquinCells.
+ * In this implementation, we imagine the coordinates of the board as the bottom right hand quadrant
+ * of a standard two-dimensional graph, ignoring the negative sign.
+ * Thus the first array represents the rows of the grid, and the second array the columns.
+ * Thus we use the naming x and y for the indices into these arrays.
+ */
 public class DefaultBoardState extends TaquinBoardState {
 
     private final int size;
@@ -15,12 +23,6 @@ public class DefaultBoardState extends TaquinBoardState {
     public DefaultBoardState(int size) {
         this.size = size;
         boardImplementation = new TaquinCell[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                // This ensures that we can set cells to specific positions when they are first inserted
-                boardImplementation[i][j] = null;
-            }
-        }
     }
 
     public DefaultBoardState(DefaultBoardState boardState, CellFactory taquinCellFactory) {
@@ -54,24 +56,27 @@ public class DefaultBoardState extends TaquinBoardState {
         return boardImplementation[y][x];
     }
 
-    @Override
-    public TaquinCell getAtPosition(Position position) {
-        return getAtPosition(position.getX(), position.getY());
-    }
-
     private void setAtPosition(Position position, TaquinCell target) {
         boardImplementation[position.getY()][position.getX()] = target;
     }
 
+    /**
+     * This method results in an updated board state representing the transition after an action.
+     * The implementation is simple in that it readily throws index exceptions, so the caller must either
+     * expect the exception or check independently that the exception will not occur.
+     *
+     * @param action The action we want to perform in our state transition
+     * @param target The target of that action
+     */
     @Override
-    public void processInstruction(TaquinBoardInstruction instruction, TaquinCell target) {
+    public void processAction(TaquinBoardAction action, TaquinCell target) {
         TaquinCell neighbor;
-        switch (instruction) {
+        switch (action) {
             case SWAP_UP -> neighbor = getNeighbor(TaquinBoardDirection.UP, target);
             case SWAP_RIGHT -> neighbor = getNeighbor(TaquinBoardDirection.RIGHT, target);
             case SWAP_DOWN -> neighbor = getNeighbor(TaquinBoardDirection.DOWN, target);
             case SWAP_LEFT -> neighbor = getNeighbor(TaquinBoardDirection.LEFT, target);
-            default -> throw new IllegalStateException("Unexpected value: " + instruction);
+            default -> throw new IllegalStateException("Unexpected value: " + action);
         }
         Position tempNewPosition = neighbor.getPosition();
         Position tempTargetPosition = target.getPosition();
@@ -98,12 +103,12 @@ public class DefaultBoardState extends TaquinBoardState {
     }
 
     @Override
-    public boolean hasNeighbor(TaquinBoardDirection direction, TaquinCell target) {
+    public boolean targetHasNeighbor(TaquinBoardDirection direction, TaquinCell target) {
         try {
             getNeighbor(direction, target);
-            return true;
-        } catch (IndexOutOfBoundsException e) {
             return false;
+        } catch (IndexOutOfBoundsException e) {
+            return true;
         }
     }
 

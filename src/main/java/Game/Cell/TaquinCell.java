@@ -2,8 +2,22 @@ package Game.Cell;
 
 import java.util.Objects;
 
+/**
+ * Base implementation of a TaquinCell
+ * Stores the current position and id of a cell.
+ * We separate the concept of id from representation.
+ * This allows us to decide with what label we want to display a cell.
+ * Currently, we only have cells that represent their label as a string.
+ * However, this abstraction would allow us to instead represent the board with an image or something of the sort
+ * and our algorithms would work equally well.
+ */
 public abstract class TaquinCell {
 
+    /*
+        Value of the BLANK_ID is randomly chosen to be a relatively large prime number.
+        Instances of a Taquin puzzle of size 1013x1013 and greater are totally unsolvable for reasons unrelated
+        to the value of the BLANK_ID. So this value is more or less arbitrary.
+     */
     public static int BLANK_ID = 1013;
 
     private final int id;

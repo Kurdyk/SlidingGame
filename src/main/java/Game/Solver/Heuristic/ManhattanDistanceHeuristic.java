@@ -5,7 +5,6 @@ import Game.Solver.SolutionStep;
 
 public class ManhattanDistanceHeuristic extends Heuristic {
 
-
     private final TargetBoardState targetBoardState;
 
     public ManhattanDistanceHeuristic(TargetBoardState targetBoardState) {
@@ -13,7 +12,7 @@ public class ManhattanDistanceHeuristic extends Heuristic {
     }
 
     @Override
-    public int getHeuristicValue(SolutionStep step) {
+    public int getResult(SolutionStep step) {
         int totalDistance = 0;
         var state = step.state();
         for (int y = 0; y < state.getSize(); y++) {
