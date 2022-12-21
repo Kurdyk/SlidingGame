@@ -9,6 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This class represents the user interface of the board. When the user interface takes actions which modify
+ * the game, they pass through this class.
+ * Algorithms which solve the puzzle do not interact with this class, instead they directly access board states.
+ */
 public class Board {
 
     private final CellFactory cellFactory;
@@ -87,6 +92,7 @@ public class Board {
     /**
      * Shuffle the board with a certain number of randomly chosen moves without direct contradiction between moves (like
      * up and directly after down).
+     *
      * @param numberOfMoves the number of actions to perform
      */
     private void shuffleInstruction(int numberOfMoves) {
@@ -111,7 +117,7 @@ public class Board {
         for (int i = 0; i < numberOfMoves; i++) {
             //System.out.println("Shuffling step : " + i);
             int choice = random.nextInt(4);
-            if (lastDirectionChoice != -1  && choice == ~lastDirectionChoice) { // direction
+            if (lastDirectionChoice != -1 && choice == ~lastDirectionChoice) { // direction
                 choice = (choice + 1) % 4;
             }
             TaquinCell empty = boardState.getEmptyPosition();
@@ -122,12 +128,12 @@ public class Board {
                 default -> TaquinBoardDirection.DOWN;
             };
 
-            if (!boardState.hasNeighbor(direction, empty)) { // illegal move
+            if (!boardState.targetHasNeighbor(direction, empty)) { // illegal move
                 i--;
                 continue;
             }
 
-            boardState.processInstruction(TaquinBoardInstruction.mapFromDirection(direction), empty);
+            boardState.processAction(TaquinBoardAction.mapFromDirection(direction), empty);
             lastDirectionChoice = choice;
         }
 
@@ -138,13 +144,20 @@ public class Board {
         return boardState.toString();
     }
 
+    /**
+     * Takes a position of a cell and finds a neighbor which is the empty cell. If such a neighbor is found, the
+     * position of the two cells are switched.
+     *
+     * @param x
+     * @param y
+     */
     public void move(int x, int y) {
         final TaquinCell currentCell = this.boardState.getAtPosition(x, y);
         for (TaquinBoardDirection direction : TaquinBoardDirection.values()) {
             try {
                 var neighbor = this.boardState.getNeighbor(direction, currentCell);
                 if (neighbor.isEmpty()) {
-                    boardState.processInstruction(TaquinBoardInstruction.mapFromDirection(direction), currentCell);
+                    boardState.processAction(TaquinBoardAction.mapFromDirection(direction), currentCell);
                     return;
                 }
             } catch (IndexOutOfBoundsException ignored) {

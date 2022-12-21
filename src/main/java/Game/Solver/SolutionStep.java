@@ -1,19 +1,28 @@
 package Game.Solver;
 
-import Game.Board.TaquinBoardInstruction;
+import Game.Board.TaquinBoardAction;
 import Game.Board.TaquinBoardState;
 
+/**
+ * An important class specific to our implementation.
+ * The SolutionStep carries the information of a state in the context of solving the puzzle via an algorithm.
+ * The SolutionStep maintains a pointer to the parent state, as well as the instruction that when acted upon the parent
+ * results in the current state.
+ * Thus, we can reconstruct the solution path.
+ * The depth represents the total cost of actions, each having a flat cost of 1, to get to this state.
+ * And finally the heuristic value is set independently of this class, allowing us to operate on this class
+ * via any heuristic.
+ */
 public final class SolutionStep implements Comparable<SolutionStep> {
     private final TaquinBoardState state;
     private final SolutionStep parentState;
-    private final TaquinBoardInstruction instruction;
+    private final TaquinBoardAction instruction;
     private final int depth;
-
     private int heuristicValue;
 
     public SolutionStep(TaquinBoardState state,
                         SolutionStep parentState,
-                        TaquinBoardInstruction instruction,
+                        TaquinBoardAction instruction,
                         int depth) {
         this.state = state;
         this.parentState = parentState;
@@ -52,7 +61,7 @@ public final class SolutionStep implements Comparable<SolutionStep> {
         return parentState;
     }
 
-    public TaquinBoardInstruction instruction() {
+    public TaquinBoardAction instruction() {
         return instruction;
     }
 

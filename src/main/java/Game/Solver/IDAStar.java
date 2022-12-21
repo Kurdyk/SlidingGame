@@ -1,13 +1,15 @@
 package Game.Solver;
 
+import Game.Board.TaquinBoardAction;
 import Game.Board.TaquinBoardDirection;
-import Game.Board.TaquinBoardInstruction;
 import Game.Board.TaquinBoardState;
 import Game.Cell.CellFactory;
 import Game.Solver.Heuristic.Heuristic;
 import javafx.util.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class IDAStar extends TaquinSolutionAlgorithm {
 
@@ -24,7 +26,7 @@ public class IDAStar extends TaquinSolutionAlgorithm {
     @Override
     public List<SolutionStep> solve(TaquinBoardState initialState) {
 
-        if (!isSolvable(initialState)) {
+        if (stateIsSolvable(initialState)) {
             System.out.println("Cannot be solved");
             return Collections.emptyList();
         }
@@ -34,7 +36,7 @@ public class IDAStar extends TaquinSolutionAlgorithm {
         }
 
         var initialStep = new SolutionStep(initialState, null, null, 0);
-        int bound = this.heuristic.getHeuristicValue(initialStep);
+        int bound = this.heuristic.getResult(initialStep);
         List<SolutionStep> path = new ArrayList<>();
         path.add(initialStep);
 
@@ -65,19 +67,19 @@ public class IDAStar extends TaquinSolutionAlgorithm {
 
         Integer min = Integer.MAX_VALUE;
         for (TaquinBoardDirection direction : TaquinBoardDirection.values()) {
-            if (!currentState.state().hasNeighbor(direction, currentState.state().getEmptyPosition())) {
+            if (!currentState.state().targetHasNeighbor(direction, currentState.state().getEmptyPosition())) {
                 continue;
             }
 
 
             var newBoardState = currentState.state().copy(cellFactory);
             var emptyPosition = newBoardState.getEmptyPosition();
-            var instruction = TaquinBoardInstruction.mapFromDirection(direction);
-            newBoardState.processInstruction(instruction, emptyPosition);
+            var instruction = TaquinBoardAction.mapFromDirection(direction);
+            newBoardState.processAction(instruction, emptyPosition);
 
             var newDistance = currentState.depth() + 1;
             var solutionStep = new SolutionStep(newBoardState, currentState, instruction, newDistance);
-            solutionStep.setHeuristicValue(heuristic.getHeuristicValue(solutionStep));
+            solutionStep.setHeuristicValue(heuristic.getResult(solutionStep));
 
             if (path.contains(solutionStep))
                 continue;

@@ -14,7 +14,7 @@ public class LinearConflictHeuristic extends Heuristic {
     }
 
     @Override
-    public int getHeuristicValue(SolutionStep step) {
+    public int getResult(SolutionStep step) {
         var evaluationState = step.state();
         int n = evaluationState.getSize();
         var targetPositions = new Position[n * n];
@@ -68,6 +68,6 @@ public class LinearConflictHeuristic extends Heuristic {
             }
         }
 
-        return 2 * numConflicts + manhattanDistanceHeuristic.getHeuristicValue(step);
+        return 2 * numConflicts + manhattanDistanceHeuristic.getResult(step);
     }
 }
