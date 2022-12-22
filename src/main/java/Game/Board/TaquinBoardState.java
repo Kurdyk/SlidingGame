@@ -10,11 +10,11 @@ import Game.Cell.Position;
  * implementations of the state, and reducing overhead when refactoring.
  */
 public abstract class TaquinBoardState {
-    public static int EMPTY_ID = 1013;
+    public static short EMPTY_ID = 1013;
 
     public abstract int getSize();
 
-    public abstract Integer getAtPosition(int x, int y);
+    public abstract short getAtPosition(int x, int y);
 
     /**
      * This represents the transition function of our formalization
@@ -25,15 +25,15 @@ public abstract class TaquinBoardState {
      */
     public abstract void processAction(TaquinBoardAction action, Position target);
 
-    public abstract Integer getNeighbor(TaquinBoardDirection direction, Position target);
+    public abstract short getNeighbor(TaquinBoardDirection direction, Position target);
 
     public abstract boolean targetHasNeighbor(TaquinBoardDirection direction, Position target);
 
-    public abstract void addCell(Position position, Integer value);
+    public abstract void addCell(Position position, short value);
 
     public abstract Position getEmptyPosition();
 
-    public abstract Position getPositionOfCell(int id);
+    public abstract Position getPositionOfCell(short id);
 
     public abstract TaquinBoardState copy();
 

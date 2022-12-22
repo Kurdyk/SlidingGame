@@ -30,17 +30,13 @@ public class Board {
 
     }
 
-    public Board(TaquinBoardState boardState, ArrayList<ArrayList<Integer>> cellContent) {
+    public Board(TaquinBoardState boardState, ArrayList<ArrayList<Short>> cellContent) {
         this.boardState = boardState;
 
         for (int x = 0; x < this.boardState.getSize(); x++) {
             for (int y = 0; y < this.boardState.getSize(); y++) {
-                Integer content = cellContent.get(x).get(y);
-                if (content == null) {
-                    this.boardState.addCell(new Position(x, y), content);
-                } else {
-                    this.boardState.addCell(new Position(x, y), content);
-                }
+                short content = cellContent.get(x).get(y);
+                this.boardState.addCell(new Position(x, y), content);
             }
         }
     }
@@ -63,8 +59,8 @@ public class Board {
     private void shuffle() {
         int nbOfCells = getSize() * getSize() - 1;
 
-        ArrayList<Integer> availableIds = new ArrayList<>();
-        for (int i = 0; i < nbOfCells; i++) {
+        ArrayList<Short> availableIds = new ArrayList<>();
+        for (short i = 0; i < nbOfCells; i++) {
             availableIds.add(i);
         }
 
@@ -94,7 +90,7 @@ public class Board {
     private void shuffleInstruction(int numberOfMoves) {
 
         // Creating the cells
-        int count = 0;
+        short count = 0;
         for (int i = 0; i < getSize(); i++) {
             for (int j = 0; j < getSize(); j++) {
                 if (i == getSize() - 1 && j == getSize() - 1) {

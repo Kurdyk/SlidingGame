@@ -17,16 +17,16 @@ public class DefaultBoardState extends TaquinBoardState {
 
     private final int size;
 
-    private final int[][] boardImplementation;
+    private final short[][] boardImplementation;
 
     public DefaultBoardState(int size) {
         this.size = size;
-        boardImplementation = new int[size][size];
+        boardImplementation = new short[size][size];
     }
 
     public DefaultBoardState(DefaultBoardState boardState) {
         this.size = boardState.size;
-        boardImplementation = new int[size][size];
+        boardImplementation = new short[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 var toCopy = boardState.getAtPosition(j, i);
@@ -41,17 +41,13 @@ public class DefaultBoardState extends TaquinBoardState {
     }
 
     @Override
-    public void addCell(Position position, Integer value) {
+    public void addCell(Position position, short value) {
         boardImplementation[position.getY()][position.getX()] = value;
     }
 
     @Override
-    public Integer getAtPosition(int x, int y) {
+    public short getAtPosition(int x, int y) {
         return boardImplementation[y][x];
-    }
-
-    private void setAtPosition(Position position, Integer target) {
-        boardImplementation[position.getY()][position.getX()] = target;
     }
 
     /**
@@ -64,8 +60,8 @@ public class DefaultBoardState extends TaquinBoardState {
      */
     @Override
     public void processAction(TaquinBoardAction action, Position target) {
-        int neighbor;
-        int targetValue = boardImplementation[target.getY()][target.getX()];
+        short neighbor;
+        short targetValue = boardImplementation[target.getY()][target.getX()];
         switch (action) {
             case SWAP_UP -> {
                 neighbor = boardImplementation[target.getY() - 1][target.getX()];
@@ -92,8 +88,8 @@ public class DefaultBoardState extends TaquinBoardState {
     }
 
     @Override
-    public Integer getNeighbor(TaquinBoardDirection direction, Position target) {
-        int neighbor;
+    public short getNeighbor(TaquinBoardDirection direction, Position target) {
+        short neighbor;
         switch (direction) {
             case UP -> neighbor = getAtPosition(target.getX(), target.getY() - 1);
             case RIGHT -> neighbor = getAtPosition(target.getX() + 1, target.getY());
@@ -133,7 +129,7 @@ public class DefaultBoardState extends TaquinBoardState {
     }
 
     @Override
-    public Position getPositionOfCell(int id) {
+    public Position getPositionOfCell(short id) {
         for (int y = 0; y < getSize(); y++) {
             for (int x = 0; x < getSize(); x++) {
                 if (getAtPosition(x, y) == id) {

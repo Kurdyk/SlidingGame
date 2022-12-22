@@ -39,7 +39,7 @@ public final class SolutionStep implements Comparable<SolutionStep> {
         SolutionStep that = (SolutionStep) o;
         for (int y = 0; y < state.getSize(); y++) {
             for (int x = 0; x < state.getSize(); x++) {
-                if (!state.getAtPosition(x, y).equals(that.state().getAtPosition(x, y))) {
+                if (state.getAtPosition(x, y) != that.state().getAtPosition(x, y)) {
                     return false;
                 }
             }
