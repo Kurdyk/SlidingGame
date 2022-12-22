@@ -106,9 +106,9 @@ public class DefaultBoardState extends TaquinBoardState {
     public boolean targetHasNeighbor(TaquinBoardDirection direction, TaquinCell target) {
         try {
             getNeighbor(direction, target);
-            return false;
-        } catch (IndexOutOfBoundsException e) {
             return true;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
         }
     }
 
