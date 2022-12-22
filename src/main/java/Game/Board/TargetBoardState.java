@@ -1,6 +1,6 @@
 package Game.Board;
 
-import Game.Cell.StringRepresentationCell;
+import Game.Cell.Position;
 
 public class TargetBoardState extends DefaultBoardState {
 
@@ -10,9 +10,9 @@ public class TargetBoardState extends DefaultBoardState {
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
                 if (y == size - 1 && x == size - 1) {
-                    addCell(new StringRepresentationCell(x, y));
+                    addCell(new Position(x, y), EMPTY_ID);
                 } else {
-                    addCell(new StringRepresentationCell(id, x, y));
+                    addCell(new Position(x, y), id);
                     id++;
                 }
             }

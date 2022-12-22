@@ -3,7 +3,6 @@ package Parser;
 import Game.Board.Board;
 import Game.Board.DefaultBoardState;
 import Game.Board.TaquinBoardState;
-import Game.Cell.DefaultCellFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,9 +28,9 @@ public class NewLineParser implements Parser {
             String[] lineContent = currentLine.split(",|;"); // split the line at each ; or ,
             for (String cell : lineContent) {
                 String striped = cell.replaceAll(" ", "");
-                Integer content;
+                int content;
                 if (striped.length() == 0) { // empty cell
-                    content = null;
+                    content = TaquinBoardState.EMPTY_ID;
                 } else {
                     content = Integer.parseInt(striped);
                 }
@@ -40,6 +39,6 @@ public class NewLineParser implements Parser {
             lineCount++;
         }
         DefaultBoardState defaultBoardState = new DefaultBoardState(lineCount);
-        return new Board(defaultBoardState, new DefaultCellFactory(), cellContent);
+        return new Board(defaultBoardState, cellContent);
     }
 }

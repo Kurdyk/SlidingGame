@@ -1,7 +1,7 @@
 package Game.Board;
 
-import Game.Cell.CellFactory;
-import Game.Cell.TaquinCell;
+import Game.Cell.CellUtilities;
+import Game.Cell.Position;
 import Game.Solver.SolutionStep;
 import Game.Solver.TaquinSolutionAlgorithm;
 
@@ -16,34 +16,30 @@ import java.util.Random;
  */
 public class Board {
 
-    private final CellFactory cellFactory;
     private TaquinBoardState boardState;
 
-    public Board(TaquinBoardState boardState, CellFactory cellFactory) {
+    public Board(TaquinBoardState boardState) {
         this.boardState = boardState;
-        this.cellFactory = cellFactory;
         this.shuffle();
 
     }
 
-    public Board(TaquinBoardState boardState, CellFactory cellFactory, int shuffleDepth) {
+    public Board(TaquinBoardState boardState, int shuffleDepth) {
         this.boardState = boardState;
-        this.cellFactory = cellFactory;
         this.shuffleInstruction(shuffleDepth);
 
     }
 
-    public Board(TaquinBoardState boardState, CellFactory cellFactory, ArrayList<ArrayList<Integer>> cellContent) {
+    public Board(TaquinBoardState boardState, ArrayList<ArrayList<Integer>> cellContent) {
         this.boardState = boardState;
-        this.cellFactory = cellFactory;
 
         for (int x = 0; x < this.boardState.getSize(); x++) {
             for (int y = 0; y < this.boardState.getSize(); y++) {
                 Integer content = cellContent.get(x).get(y);
                 if (content == null) {
-                    this.boardState.addCell(this.cellFactory.createEmpty(y, x));
+                    this.boardState.addCell(new Position(x, y), content);
                 } else {
-                    this.boardState.addCell(this.cellFactory.createTaquinCell(content, y, x));
+                    this.boardState.addCell(new Position(x, y), content);
                 }
             }
         }
@@ -81,12 +77,12 @@ public class Board {
                     break;
                 }
                 int selected = random.nextInt(availableIds.size());
-                this.boardState.addCell(cellFactory.createTaquinCell(availableIds.get(selected), j, i)); // add cell with number
+                this.boardState.addCell(new Position(j, i), availableIds.get(selected)); // add cell with number
                 availableIds.remove(selected);
             }
         }
 
-        this.boardState.addCell(cellFactory.createEmpty(getSize() - 1, getSize() - 1)); // add empty cell
+        this.boardState.addCell(new Position(getSize() - 1, getSize() - 1), TaquinBoardState.EMPTY_ID); // add empty cell
     }
 
     /**
@@ -105,11 +101,11 @@ public class Board {
                     // Skip the last position
                     break;
                 }
-                this.boardState.addCell(cellFactory.createTaquinCell(count++, j, i)); // add cell with number
+                this.boardState.addCell(new Position(j, i), count++); // add cell with number
             }
         }
 
-        this.boardState.addCell(cellFactory.createEmpty(getSize() - 1, getSize() - 1)); // add empty cell
+        this.boardState.addCell(new Position(getSize() - 1, getSize() - 1), TaquinBoardState.EMPTY_ID); // add empty cell
 
         // Shuffling
         Random random = new Random();
@@ -120,7 +116,7 @@ public class Board {
             if (lastDirectionChoice != -1 && choice == ~lastDirectionChoice) { // direction
                 choice = (choice + 1) % 4;
             }
-            TaquinCell empty = boardState.getEmptyPosition();
+            Position empty = boardState.getEmptyPosition();
             TaquinBoardDirection direction = switch (choice) {
                 case 0 -> TaquinBoardDirection.UP;
                 case 1 -> TaquinBoardDirection.LEFT;
@@ -152,11 +148,11 @@ public class Board {
      * @param y
      */
     public void move(int x, int y) {
-        final TaquinCell currentCell = this.boardState.getAtPosition(x, y);
+        final Position currentCell = new Position(x, y);
         for (TaquinBoardDirection direction : TaquinBoardDirection.values()) {
             try {
                 var neighbor = this.boardState.getNeighbor(direction, currentCell);
-                if (neighbor.isEmpty()) {
+                if (CellUtilities.cellIsEmpty(neighbor)) {
                     boardState.processAction(TaquinBoardAction.mapFromDirection(direction), currentCell);
                     return;
                 }
