@@ -48,11 +48,11 @@ public class AStar extends TaquinSolutionAlgorithm {
 
         // The frontier, with capacity initialized to an arbitrary large value
         var states = new PriorityQueue<SolutionStep>(1000);
-        var seenStates = new HashSet<SolutionStep>();
+        var seenStates = new HashSet<Integer>();
 
         var initialStep = new SolutionStep(initialState, null, null, 0);
         states.add(initialStep);
-        seenStates.add(initialStep);
+        seenStates.add(initialStep.hashCode());
 
         if (logProgress) {
             System.out.println("Start Solve!");
@@ -95,8 +95,8 @@ public class AStar extends TaquinSolutionAlgorithm {
                 solutionStep.setHeuristicValue(heuristic.getResult(solutionStep));
 
                 // Totally new node, just add it to the queue
-                if (!seenStates.contains(solutionStep)) {
-                    seenStates.add(solutionStep);
+                if (!seenStates.contains(solutionStep.hashCode())) {
+                    seenStates.add(solutionStep.hashCode());
                     states.add(solutionStep);
                 }
 
