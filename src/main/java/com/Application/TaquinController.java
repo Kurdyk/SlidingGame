@@ -5,6 +5,7 @@ import com.Game.Board.DefaultBoardState;
 import com.Game.Board.TargetBoardState;
 import com.Game.Cell.CellUtilities;
 import com.Game.Solver.AStar;
+import com.Game.Solver.GreedyAstar;
 import com.Game.Solver.Heuristic.DisplacedTilesHeuristic;
 import com.Game.Solver.Heuristic.LinearConflictHeuristic;
 import com.Game.Solver.Heuristic.ManhattanDistanceHeuristic;
@@ -112,6 +113,7 @@ public class TaquinController implements Initializable {
 
         TaquinSolutionAlgorithm algorithm = switch (chosenAlgorithm) {
             case "IDA*" -> new IDAStar(heuristic, withLogs);
+            case "GreedyA*" -> new GreedyAstar(heuristic, withLogs);
             default -> new AStar(heuristic, withLogs);
         };
 
