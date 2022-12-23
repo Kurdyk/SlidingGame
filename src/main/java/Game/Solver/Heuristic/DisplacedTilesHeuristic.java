@@ -1,6 +1,7 @@
 package Game.Solver.Heuristic;
 
 import Game.Board.TargetBoardState;
+import Game.Cell.CellUtilities;
 import Game.Solver.SolutionStep;
 
 public class DisplacedTilesHeuristic extends Heuristic {
@@ -19,10 +20,10 @@ public class DisplacedTilesHeuristic extends Heuristic {
             for (int x = 0; x < state.getSize(); x++) {
                 var targetCell = targetBoardState.getAtPosition(x, y);
                 var evaluationCell = state.getAtPosition(x, y);
-                if (evaluationCell.isEmpty()) {
+                if (CellUtilities.cellIsEmpty(evaluationCell)) {
                     continue;
                 }
-                if (targetCell.getCellId() != evaluationCell.getCellId()) {
+                if (targetCell != evaluationCell) {
                     count++;
                 }
             }

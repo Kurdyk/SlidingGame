@@ -3,7 +3,7 @@ package Application;
 import Game.Board.Board;
 import Game.Board.DefaultBoardState;
 import Game.Board.TargetBoardState;
-import Game.Cell.DefaultCellFactory;
+import Game.Cell.CellUtilities;
 import Game.Solver.AStar;
 import Game.Solver.Heuristic.DisplacedTilesHeuristic;
 import Game.Solver.Heuristic.LinearConflictHeuristic;
@@ -67,7 +67,7 @@ public class TaquinController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         DefaultBoardState boardState = new DefaultBoardState(Integer.parseInt(this.sizeField.getText()));
-        this.board = new Board(boardState, new DefaultCellFactory());
+        this.board = new Board(boardState);
         this.boardDisplay.resize(100 * this.board.getSize(), 100 * this.board.getSize());
 
         this.heuristicCombo.getSelectionModel().selectedItemProperty().addListener(
@@ -88,9 +88,9 @@ public class TaquinController implements Initializable {
         DefaultBoardState boardState = new DefaultBoardState(Integer.parseInt(this.sizeField.getText()));
         String shuffleDepth = this.shuffleDepthField.getText();
         if (shuffleDepth.equals("")) {
-            this.board = new Board(boardState, new DefaultCellFactory());
+            this.board = new Board(boardState);
         } else {
-            this.board = new Board(boardState, new DefaultCellFactory(), Integer.parseInt(shuffleDepth));
+            this.board = new Board(boardState, Integer.parseInt(shuffleDepth));
         }
         resizeWindow();
     }
@@ -111,8 +111,8 @@ public class TaquinController implements Initializable {
         };
 
         TaquinSolutionAlgorithm algorithm = switch (chosenAlgorithm) {
-            case "IDA*" -> new IDAStar(heuristic, new DefaultCellFactory(), withLogs);
-            default -> new AStar(heuristic, new DefaultCellFactory(), withLogs);
+            case "IDA*" -> new IDAStar(heuristic, withLogs);
+            default -> new AStar(heuristic, withLogs);
         };
 
         var solution = board.solve(algorithm);
@@ -175,7 +175,8 @@ public class TaquinController implements Initializable {
                 button.setAlignment(Pos.CENTER);
                 button.setMaxSize(50, 50);
                 button.setMinSize(50, 50);
-                button.setText(String.valueOf(this.board.getBoardState().getAtPosition(x, y).getRepresentation()));
+                var value = this.board.getBoardState().getAtPosition(x, y);
+                button.setText(CellUtilities.getStrValueOfCell(value));
                 int finalX = x;
                 int finalY = y;
                 button.setOnAction(event -> {
