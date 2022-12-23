@@ -3,7 +3,6 @@ package com.Game.Solver;
 import com.Game.Board.TaquinBoardAction;
 import com.Game.Board.TaquinBoardDirection;
 import com.Game.Board.TaquinBoardState;
-import com.Game.Cell.CellFactory;
 import com.Game.Solver.Heuristic.Heuristic;
 import javafx.util.Pair;
 
@@ -13,13 +12,11 @@ import java.util.List;
 
 public class IDAStar extends TaquinSolutionAlgorithm {
 
-    private final CellFactory cellFactory;
     private final boolean logProgress;
     private final Heuristic heuristic;
 
-    public IDAStar(Heuristic heuristic, CellFactory cellFactory, boolean logProgress) {
+    public IDAStar(Heuristic heuristic, boolean logProgress) {
         this.heuristic = heuristic;
-        this.cellFactory = cellFactory;
         this.logProgress = logProgress;
     }
 
@@ -72,7 +69,7 @@ public class IDAStar extends TaquinSolutionAlgorithm {
             }
 
 
-            var newBoardState = currentState.state().copy(cellFactory);
+            var newBoardState = currentState.state().copy();
             var emptyPosition = newBoardState.getEmptyPosition();
             var instruction = TaquinBoardAction.mapFromDirection(direction);
             newBoardState.processAction(instruction, emptyPosition);

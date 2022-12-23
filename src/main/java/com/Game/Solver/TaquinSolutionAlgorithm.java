@@ -1,7 +1,7 @@
 package com.Game.Solver;
 
 import com.Game.Board.TaquinBoardState;
-import com.Game.Cell.TaquinCell;
+import com.Game.Cell.CellUtilities;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +49,7 @@ public abstract class TaquinSolutionAlgorithm {
         int n = state.getSize();
 
         // Get the linear representation of the puzzle
-        TaquinCell[] flatPuzzle = new TaquinCell[n * n];
+        int[] flatPuzzle = new int[n * n];
         int index = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -61,8 +61,8 @@ public abstract class TaquinSolutionAlgorithm {
         int inversions = 0;
         for (int i = 0; i < flatPuzzle.length; i++) {
             for (int j = i + 1; j < flatPuzzle.length; j++) {
-                if (!flatPuzzle[i].isEmpty() && !flatPuzzle[j].isEmpty()
-                        && flatPuzzle[i].getCellId() > flatPuzzle[j].getCellId()) {
+                if (!CellUtilities.cellIsEmpty(flatPuzzle[i]) && !CellUtilities.cellIsEmpty(flatPuzzle[j])
+                        && flatPuzzle[i] > flatPuzzle[j]) {
                     inversions++;
                 }
             }
@@ -72,14 +72,18 @@ public abstract class TaquinSolutionAlgorithm {
         // Check if the puzzle is solvable
         if (n % 2 == 1) {
             // If n is odd, the puzzle is solvable if the number of inversions is even
-            return inversions % 2 != 0;
+            return inversions % 2 == 0;
         } else {
             // If n is even, the puzzle is solvable if the blank is on an odd row counting from the bottom
             // and the number of inversions is odd, or if the blank is on an even row counting from the bottom
             // and the number of inversions is even
-            int blankRow = state.getEmptyPosition().getPosition().getY();
+            int blankRow = state.getEmptyPosition().getY();
             int rowNumberFromBottom = state.getSize() - blankRow;
-            return (rowNumberFromBottom % 2 != 1 || inversions % 2 != 0) && (rowNumberFromBottom % 2 != 0 || inversions % 2 != 1);
+            if (inversions % 2 == 0) {
+                return rowNumberFromBottom % 2 != 0;
+            } else {
+                return rowNumberFromBottom % 2 != 1;
+            }
         }
     }
 }

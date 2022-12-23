@@ -3,7 +3,6 @@ package com.Game.Solver;
 import com.Game.Board.TaquinBoardAction;
 import com.Game.Board.TaquinBoardDirection;
 import com.Game.Board.TaquinBoardState;
-import com.Game.Cell.CellFactory;
 import com.Game.Solver.Heuristic.Heuristic;
 
 import java.util.Collections;
@@ -29,13 +28,12 @@ import java.util.PriorityQueue;
  **/
 public class AStar extends TaquinSolutionAlgorithm {
 
-    private final CellFactory cellFactory;
+
     private final boolean logProgress;
     private final Heuristic heuristic;
 
-    public AStar(Heuristic heuristic, CellFactory cellFactory, boolean logProgress) {
+    public AStar(Heuristic heuristic, boolean logProgress) {
         this.heuristic = heuristic;
-        this.cellFactory = cellFactory;
         this.logProgress = logProgress;
     }
 
@@ -80,7 +78,7 @@ public class AStar extends TaquinSolutionAlgorithm {
                     System.out.println("Generating new state from direction: " + direction);
                 }
                 // Copy the current state to a new object
-                var newBoardState = currentState.state().copy(cellFactory);
+                var newBoardState = currentState.state().copy();
                 var emptyPosition = newBoardState.getEmptyPosition();
                 var instruction = TaquinBoardAction.mapFromDirection(direction);
                 // Run the transition function, producing a new state
@@ -99,7 +97,6 @@ public class AStar extends TaquinSolutionAlgorithm {
                     seenStates.add(solutionStep);
                     states.add(solutionStep);
                 }
-
             }
 
             if (states.size() % 10000 == 0) {

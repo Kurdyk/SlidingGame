@@ -1,8 +1,6 @@
 package com.Game.Board;
 
-import com.Game.Cell.CellFactory;
 import com.Game.Cell.Position;
-import com.Game.Cell.TaquinCell;
 
 /**
  * Abstraction of the state of the board.
@@ -12,9 +10,11 @@ import com.Game.Cell.TaquinCell;
  * implementations of the state, and reducing overhead when refactoring.
  */
 public abstract class TaquinBoardState {
+    public static short EMPTY_ID = 1013;
+
     public abstract int getSize();
 
-    public abstract TaquinCell getAtPosition(int x, int y);
+    public abstract short getAtPosition(int x, int y);
 
     /**
      * This represents the transition function of our formalization
@@ -23,19 +23,19 @@ public abstract class TaquinBoardState {
      * @param target The target cell of the action,
      *               For this action to be valid, it must be either the empty cell or a neighbor of the empty cell.
      */
-    public abstract void processAction(TaquinBoardAction action, TaquinCell target);
+    public abstract void processAction(TaquinBoardAction action, Position target);
 
-    public abstract TaquinCell getNeighbor(TaquinBoardDirection direction, TaquinCell target);
+    public abstract short getNeighbor(TaquinBoardDirection direction, Position target);
 
-    public abstract boolean targetHasNeighbor(TaquinBoardDirection direction, TaquinCell target);
+    public abstract boolean targetHasNeighbor(TaquinBoardDirection direction, Position target);
 
-    public abstract void addCell(TaquinCell cell);
+    public abstract void addCell(Position position, short value);
 
-    public abstract TaquinCell getEmptyPosition();
+    public abstract Position getEmptyPosition();
 
-    public abstract Position getPositionOfCell(int id);
+    public abstract Position getPositionOfCell(short id);
 
-    public abstract TaquinBoardState copy(CellFactory taquinCellFactory);
+    public abstract TaquinBoardState copy();
 
     public abstract boolean isGoalState();
 }
