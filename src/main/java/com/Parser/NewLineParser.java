@@ -9,6 +9,13 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Implement the Parser interface for the following file format:
+ * # for comments in the file
+ * \n to separate each row of the board
+ * , or ; to separate each cell of a row
+ * a space to indicate the blank cell
+ */
 public class NewLineParser implements Parser {
 
     @Override
