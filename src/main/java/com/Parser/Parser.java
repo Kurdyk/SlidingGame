@@ -1,6 +1,6 @@
-package Parser;
+package com.Parser;
 
-import Game.Board.Board;
+import com.Game.Board.Board;
 
 import java.io.File;
 import java.io.FileNotFoundException;

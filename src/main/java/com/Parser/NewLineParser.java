@@ -1,8 +1,8 @@
-package Parser;
+package com.Parser;
 
-import Game.Board.Board;
-import Game.Board.DefaultBoardState;
-import Game.Board.TaquinBoardState;
+import com.Game.Board.Board;
+import com.Game.Board.DefaultBoardState;
+import com.Game.Board.TaquinBoardState;
 
 import java.io.File;
 import java.io.FileNotFoundException;

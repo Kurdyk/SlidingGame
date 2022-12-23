@@ -1,6 +1,6 @@
-package Game.Solver.Heuristic;
+package com.Game.Solver.Heuristic;
 
-import Game.Solver.SolutionStep;
+import com.Game.Solver.SolutionStep;
 
 /**
  * We implement the Uniform Cost Search with this special heuristic. It simply returns the number of actions needed

@@ -1,4 +1,4 @@
-package Game.Board;
+package com.Game.Board;
 
 /**
  * Abstraction of the possible actions from a given state on the board.

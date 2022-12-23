@@ -1,9 +1,9 @@
-package Game.Board;
+package com.Game.Board;
 
-import Game.Cell.CellUtilities;
-import Game.Cell.Position;
-import Game.Solver.SolutionStep;
-import Game.Solver.TaquinSolutionAlgorithm;
+import com.Game.Cell.CellUtilities;
+import com.Game.Cell.Position;
+import com.Game.Solver.SolutionStep;
+import com.Game.Solver.TaquinSolutionAlgorithm;
 
 import java.util.ArrayList;
 import java.util.List;

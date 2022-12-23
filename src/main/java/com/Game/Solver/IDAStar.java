@@ -1,9 +1,9 @@
-package Game.Solver;
+package com.Game.Solver;
 
-import Game.Board.TaquinBoardAction;
-import Game.Board.TaquinBoardDirection;
-import Game.Board.TaquinBoardState;
-import Game.Solver.Heuristic.Heuristic;
+import com.Game.Board.TaquinBoardAction;
+import com.Game.Board.TaquinBoardDirection;
+import com.Game.Board.TaquinBoardState;
+import com.Game.Solver.Heuristic.Heuristic;
 import javafx.util.Pair;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
-package Game.Solver.Heuristic;
+package com.Game.Solver.Heuristic;
 
-import Game.Board.TargetBoardState;
-import Game.Solver.SolutionStep;
+import com.Game.Board.TargetBoardState;
+import com.Game.Solver.SolutionStep;
 
 public class LinearConflictHeuristic extends Heuristic {
     private final TargetBoardState targetBoardState;

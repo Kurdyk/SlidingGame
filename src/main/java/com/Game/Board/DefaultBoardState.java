@@ -1,7 +1,7 @@
-package Game.Board;
+package com.Game.Board;
 
-import Game.Cell.CellUtilities;
-import Game.Cell.Position;
+import com.Game.Cell.CellUtilities;
+import com.Game.Cell.Position;
 
 import java.util.Arrays;
 

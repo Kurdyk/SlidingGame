@@ -1,7 +1,7 @@
-package Game.Solver;
+package com.Game.Solver;
 
-import Game.Board.TaquinBoardAction;
-import Game.Board.TaquinBoardState;
+import com.Game.Board.TaquinBoardAction;
+import com.Game.Board.TaquinBoardState;
 
 /**
  * An important class specific to our implementation.

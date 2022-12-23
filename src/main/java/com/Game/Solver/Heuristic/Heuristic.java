@@ -1,6 +1,6 @@
-package Game.Solver.Heuristic;
+package com.Game.Solver.Heuristic;
 
-import Game.Solver.SolutionStep;
+import com.Game.Solver.SolutionStep;
 
 /**
  * The base class of our Heuristics.

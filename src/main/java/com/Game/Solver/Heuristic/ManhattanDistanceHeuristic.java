@@ -1,8 +1,8 @@
-package Game.Solver.Heuristic;
+package com.Game.Solver.Heuristic;
 
-import Game.Board.TargetBoardState;
-import Game.Cell.CellUtilities;
-import Game.Solver.SolutionStep;
+import com.Game.Board.TargetBoardState;
+import com.Game.Cell.CellUtilities;
+import com.Game.Solver.SolutionStep;
 
 public class ManhattanDistanceHeuristic extends Heuristic {
 

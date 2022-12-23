@@ -1,4 +1,4 @@
-package Game.Cell;
+package com.Game.Cell;
 
 public class Position {
     private int x;

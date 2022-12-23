@@ -1,6 +1,6 @@
-package Game.Cell;
+package com.Game.Cell;
 
-import Game.Board.TaquinBoardState;
+import com.Game.Board.TaquinBoardState;
 
 public class CellUtilities {
 

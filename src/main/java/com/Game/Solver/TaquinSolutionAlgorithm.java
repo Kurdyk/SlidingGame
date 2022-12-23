@@ -1,7 +1,7 @@
-package Game.Solver;
+package com.Game.Solver;
 
-import Game.Board.TaquinBoardState;
-import Game.Cell.CellUtilities;
+import com.Game.Board.TaquinBoardState;
+import com.Game.Cell.CellUtilities;
 
 import java.util.ArrayList;
 import java.util.Collections;

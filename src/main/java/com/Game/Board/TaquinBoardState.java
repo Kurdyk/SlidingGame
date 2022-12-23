@@ -1,6 +1,6 @@
-package Game.Board;
+package com.Game.Board;
 
-import Game.Cell.Position;
+import com.Game.Cell.Position;
 
 /**
  * Abstraction of the state of the board.
