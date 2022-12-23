@@ -33,9 +33,9 @@ public class Board {
     public Board(TaquinBoardState boardState, ArrayList<ArrayList<Short>> cellContent) {
         this.boardState = boardState;
 
-        for (int x = 0; x < this.boardState.getSize(); x++) {
-            for (int y = 0; y < this.boardState.getSize(); y++) {
-                short content = cellContent.get(x).get(y);
+        for (int y = 0; y < this.boardState.getSize(); y++) {
+            for (int x = 0; x < this.boardState.getSize(); x++) {
+                short content = cellContent.get(y).get(x);
                 this.boardState.addCell(new Position(x, y), content);
             }
         }
