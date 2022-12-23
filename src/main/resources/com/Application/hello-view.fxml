@@ -33,6 +33,7 @@
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="A*"/>
+                        <String fx:value="UniformCostSearch"/>
                         <String fx:value="IDA*"/>
                         <String fx:value="GreedyA*"/>
                     </FXCollections>

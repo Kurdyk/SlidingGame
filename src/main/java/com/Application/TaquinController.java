@@ -4,14 +4,11 @@ import com.Game.Board.Board;
 import com.Game.Board.DefaultBoardState;
 import com.Game.Board.TargetBoardState;
 import com.Game.Cell.CellUtilities;
-import com.Game.Solver.AStar;
-import com.Game.Solver.GreedyAstar;
+import com.Game.Solver.*;
 import com.Game.Solver.Heuristic.DisplacedTilesHeuristic;
 import com.Game.Solver.Heuristic.LinearConflictHeuristic;
 import com.Game.Solver.Heuristic.ManhattanDistanceHeuristic;
 import com.Game.Solver.Heuristic.UniformCostHeuristic;
-import com.Game.Solver.IDAStar;
-import com.Game.Solver.TaquinSolutionAlgorithm;
 import com.Parser.NewLineParser;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,6 +26,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -114,10 +112,16 @@ public class TaquinController implements Initializable {
         TaquinSolutionAlgorithm algorithm = switch (chosenAlgorithm) {
             case "IDA*" -> new IDAStar(heuristic, withLogs);
             case "GreedyA*" -> new GreedyAstar(heuristic, withLogs);
+            case "UniformCostSearch" -> new UniformCostSearch(withLogs);
             default -> new AStar(heuristic, withLogs);
         };
 
-        var solution = board.solve(algorithm);
+        List<SolutionStep> solution = null;
+        try {
+            solution = board.solve(algorithm);
+        } catch (OutOfMemoryError e) {
+            System.out.println("Not enough memory in the JVM, consider changing the algorithm or the heuristic");
+        }
         if (solution == null) {
             System.out.println("Already solved");
             return;
