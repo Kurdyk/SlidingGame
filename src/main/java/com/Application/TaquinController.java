@@ -157,7 +157,7 @@ public class TaquinController implements Initializable {
     private void resizeWindow() {
         this.boardDisplay.getChildren().removeIf(node -> GridPane.getRowIndex(node) >= Integer.parseInt(this.sizeField.getText()));
         this.boardDisplay.getChildren().removeIf(node -> GridPane.getColumnIndex(node) >= Integer.parseInt(this.sizeField.getText()));
-        this.boardDisplay.resize(100 * this.board.getSize(), 100 * this.board.getSize());
+        this.boardDisplay.resize(100 * this.board.getSize() + 200, 100 * this.board.getSize() + 150);
         this.updateBoard();
         this.boardDisplay.getScene().getWindow().setHeight(this.boardDisplay.getHeight());
         this.boardDisplay.getScene().getWindow().setWidth(this.boardDisplay.getWidth() + 100);
