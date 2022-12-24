@@ -65,10 +65,11 @@ public class TaquinController implements Initializable {
     private String chosenAlgorithm = "";
     private boolean withLogs = false;
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         DefaultBoardState boardState = new DefaultBoardState(Integer.parseInt(this.sizeField.getText()));
-        this.board = new Board(boardState);
+        this.board = new Board(boardState, 0);
         this.boardDisplay.resize(100 * this.board.getSize(), 100 * this.board.getSize());
 
         this.heuristicCombo.getSelectionModel().selectedItemProperty().addListener(
@@ -84,6 +85,10 @@ public class TaquinController implements Initializable {
         this.updateBoard();
     }
 
+    /**
+     * Action behind the "New game" button. If a number of instructions is not mention, create a fully random board not
+     * necessarily solvable.
+     */
     @FXML
     private void onNewGameClick() {
         DefaultBoardState boardState = new DefaultBoardState(Integer.parseInt(this.sizeField.getText()));
@@ -96,6 +101,9 @@ public class TaquinController implements Initializable {
         resizeWindow();
     }
 
+    /**
+     * Action behind the "Solve" button
+     */
     @FXML
     private void onSolveClick() {
         System.out.println("Solving:");
@@ -133,6 +141,9 @@ public class TaquinController implements Initializable {
         updateBoard();
     }
 
+    /**
+     * Method behind the "From file" button
+     */
     @FXML
     private void onFromFileClick() {
 
@@ -156,6 +167,9 @@ public class TaquinController implements Initializable {
         resizeWindow();
     }
 
+    /**
+     * Used to resize to window to have a clear display
+     */
     private void resizeWindow() {
         this.boardDisplay.getChildren().removeIf(node -> GridPane.getRowIndex(node) >= Integer.parseInt(this.sizeField.getText()));
         this.boardDisplay.getChildren().removeIf(node -> GridPane.getColumnIndex(node) >= Integer.parseInt(this.sizeField.getText()));
