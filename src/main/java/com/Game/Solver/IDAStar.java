@@ -33,7 +33,7 @@ public class IDAStar extends TaquinSolutionAlgorithm {
     }
 
     @Override
-    public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxRuntime, long maxFrontierSize) {
+    public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxFrontierSize, long maxRuntime) {
 
         if (!stateIsSolvable(initialState)) {
             System.out.println("Cannot be solved");
@@ -56,7 +56,7 @@ public class IDAStar extends TaquinSolutionAlgorithm {
             var pair = this.solveForBound(path, 0, bound);
             if (pair.getKey() < 0) { // a solution was found
                 var elapsedTime = System.nanoTime() - startTime;
-                return new TaquinSolutionHolder(pair.getValue(), elapsedTime, frontierSize, numExpansions);
+                return new TaquinSolutionHolder(pair.getValue(), elapsedTime, frontierSize, numExpansions, false, false);
             }
             if (pair.getKey() == Integer.MAX_VALUE) { // Should not happen since at this point all instance are solvable
                 return TaquinSolutionHolder.getEmpty();

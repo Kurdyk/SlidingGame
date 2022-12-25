@@ -60,6 +60,10 @@ public class TaquinController implements Initializable {
     private ComboBox<String> algorithmCombo;
     @FXML
     private TextField shuffleDepthField;
+    @FXML
+    private TextField maxRuntimeField;
+    @FXML
+    private TextField maxFrontierSizeField;
 
     private String chosenHeuristic = "";
     private String chosenAlgorithm = "";
@@ -124,8 +128,13 @@ public class TaquinController implements Initializable {
             default -> new AStar(heuristic, withLogs);
         };
 
+        var maxRuntime = this.maxRuntimeField.getText().isEmpty() ? -1 :
+                TimeUnit.MILLISECONDS.toNanos(Long.parseLong(this.maxRuntimeField.getText()));
+        var maxFrontier = this.maxFrontierSizeField.getText().isEmpty() ? -1 :
+                Integer.parseInt(this.maxFrontierSizeField.getText());
+
         try {
-            var solution = board.solve(algorithm, 0, 0);
+            var solution = board.solve(algorithm, maxRuntime, maxFrontier);
             reportSolution(solution);
         } catch (OutOfMemoryError error) {
             System.out.println("---Summary of Algorithm---");
@@ -139,6 +148,20 @@ public class TaquinController implements Initializable {
             return;
         }
         if (solution.solutionSteps().isEmpty()) {
+            if (solution.expiredRuntime()) {
+                System.out.println("Failed to find solution");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Algorithm exceeded the given max runtime");
+                alert.show();
+                return;
+            }
+            if (solution.expiredFrontierSize()) {
+                System.out.println("Failed to find solution");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Algorithm exceeded the given max frontier size");
+                alert.show();
+                return;
+            }
             System.out.println("Failed to find solution");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Unable to solve puzzle");
@@ -170,15 +193,15 @@ public class TaquinController implements Initializable {
 
             var subDir = this.sizeField.getText() + "x" + this.sizeField.getText();
             var puzzleName = "solved_" + this.sizeField.getText() + "x_" + shuffleDepthField.getText() + "depth_" +
-                    ((chosenAlgorithm.equals(""))? "A*" : chosenAlgorithm) + "_" +
-                    ((chosenHeuristic.equals(""))? "Uniform Cost" : chosenHeuristic).replace(' ', '_');
+                    ((chosenAlgorithm.equals("")) ? "A*" : chosenAlgorithm) + "_" +
+                    ((chosenHeuristic.equals("")) ? "Uniform Cost" : chosenHeuristic).replace(' ', '_');
 
             File directory = new File("experiments/" + subDir + "/");
             directory.mkdirs();
 
             File file = new File("experiments/" + subDir + "/" + puzzleName + ".txt");
             int cmpt = 0;
-            while(!file.createNewFile()) { // file already exsists
+            while (!file.createNewFile()) { // file already exsists
                 file = new File("experiments/" + subDir + "/" + puzzleName + "(" + cmpt++ + ")" + ".txt");
             }
 
