@@ -47,6 +47,7 @@ public class AStar extends TaquinSolutionAlgorithm {
         var seenStates = new HashSet<SolutionStep>();
 
         var initialStep = new SolutionStep(initialState, null, null, 0);
+        initialStep.setHeuristicValue(heuristic.getResult(initialStep));
         states.add(initialStep);
         seenStates.add(initialStep);
 
@@ -62,7 +63,8 @@ public class AStar extends TaquinSolutionAlgorithm {
             var currentState = states.poll();
 
             if (logProgress) {
-                System.out.println("evaluating current state");
+                System.out.println("Evaluating head of frontier with heuristic: " + currentState.getHeuristicValue());
+                System.out.println("Took head state out of " + (states.size() + 1) + " states");
                 System.out.println(currentState.state());
             }
 
@@ -87,10 +89,6 @@ public class AStar extends TaquinSolutionAlgorithm {
                 var instruction = TaquinBoardAction.mapFromDirection(direction);
                 // Run the transition function, producing a new state
                 newBoardState.processAction(instruction, emptyPosition);
-                if (logProgress) {
-                    System.out.println("Instruction: " + direction);
-                    System.out.println(newBoardState);
-                }
 
                 var newDistance = currentState.depth() + 1;
                 var solutionStep = new SolutionStep(newBoardState, currentState, instruction, newDistance);

@@ -35,7 +35,7 @@ public class IDAStar extends TaquinSolutionAlgorithm {
     @Override
     public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxRuntime, long maxFrontierSize) {
 
-        if (stateIsSolvable(initialState)) {
+        if (!stateIsSolvable(initialState)) {
             System.out.println("Cannot be solved");
             return TaquinSolutionHolder.getEmpty();
         }
