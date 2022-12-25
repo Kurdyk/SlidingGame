@@ -4,7 +4,7 @@ import com.Game.Cell.Position;
 
 /**
  * Abstraction of the state of the board.
- * The state represents an NxN grid of values. Each value is represented by a TaquinCell.
+ * The state represents an NxN grid of values. Each value is represented by a short.
  * The state of the board can be read via querying the position of a cell.
  * This abstraction allows us to hide the implementation details of a board, permitting rapid iteration on
  * implementations of the state, and reducing overhead when refactoring.
