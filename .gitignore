@@ -1,2 +1,7 @@
 /.idea/
 /target/
+/scripts/env/
+/scripts/bin
+/scripts/lib
+/scripts/include
+/scripts/pyenv.cfg
