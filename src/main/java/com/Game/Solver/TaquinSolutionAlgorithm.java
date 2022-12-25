@@ -13,7 +13,7 @@ import java.util.List;
  */
 public abstract class TaquinSolutionAlgorithm {
 
-    public abstract List<SolutionStep> solve(TaquinBoardState initialState);
+    public abstract TaquinSolutionHolder solve(TaquinBoardState initialState, long maxFrontierSize, long maxRuntime);
 
     /**
      * @param terminalNode The end state of our algorithm

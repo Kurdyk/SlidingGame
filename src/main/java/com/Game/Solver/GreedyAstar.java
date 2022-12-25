@@ -5,9 +5,7 @@ import com.Game.Board.TaquinBoardDirection;
 import com.Game.Board.TaquinBoardState;
 import com.Game.Solver.Heuristic.Heuristic;
 
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.PriorityQueue;
 
 /**
@@ -27,10 +25,10 @@ public class GreedyAstar extends TaquinSolutionAlgorithm {
     }
 
     @Override
-    public List<SolutionStep> solve(TaquinBoardState initialState) {
+    public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxFrontierSize, long maxRuntime) {
         if (!stateIsSolvable(initialState)) {
             System.out.println("Cannot be solved");
-            return Collections.emptyList();
+            return TaquinSolutionHolder.getEmpty();
         }
 
         // The frontier, with capacity initialized to an arbitrary large value
@@ -45,6 +43,10 @@ public class GreedyAstar extends TaquinSolutionAlgorithm {
             System.out.println("Start Solve!");
         }
 
+        var startTime = System.nanoTime();
+        var numExpansions = 0;
+        var frontierSize = 0;
+
         while (!states.isEmpty()) {
             var currentState = states.poll();
 
@@ -54,7 +56,9 @@ public class GreedyAstar extends TaquinSolutionAlgorithm {
             }
 
             if (currentState.state().isGoalState()) {
-                return unwindSolutionTree(currentState);
+                var solutionSteps = unwindSolutionTree(currentState);
+                var elapsedTime = System.nanoTime() - startTime;
+                return new TaquinSolutionHolder(solutionSteps, elapsedTime, frontierSize, numExpansions);
             }
 
             // We generate the possible successor states that occur when we pass ACTION into the Transition Function
@@ -88,11 +92,17 @@ public class GreedyAstar extends TaquinSolutionAlgorithm {
                 }
             }
 
+            numExpansions++;
+
             if (states.size() % 10000 == 0) {
                 System.out.println("Frontier is now at: " + states.size());
             }
+
+            if (states.size() > frontierSize) {
+                frontierSize = states.size();
+            }
         }
 
-        return Collections.emptyList();
+        return TaquinSolutionHolder.getEmpty();
     }
 }

@@ -7,11 +7,11 @@ import java.util.Arrays;
 
 /**
  * Default implementation of TaquinBoardState.
- * Stores the board in a two-dimensional array of TaquinCells.
+ * Stores the board in a two-dimensional array of shorts.
  * In this implementation, we imagine the coordinates of the board as the bottom right hand quadrant
  * of a standard two-dimensional graph, ignoring the negative sign.
- * Thus the first array represents the rows of the grid, and the second array the columns.
- * Thus we use the naming x and y for the indices into these arrays.
+ * The first array represents the rows of the grid, and the second array the columns.
+ * We use the naming x and y for the indices into these arrays.
  */
 public class DefaultBoardState extends TaquinBoardState {
 
@@ -56,7 +56,7 @@ public class DefaultBoardState extends TaquinBoardState {
      * expect the exception or check independently that the exception will not occur.
      *
      * @param action The action we want to perform in our state transition
-     * @param target The target of that action
+     * @param target The target position of that action
      */
     @Override
     public void processAction(TaquinBoardAction action, Position target) {
@@ -141,6 +141,12 @@ public class DefaultBoardState extends TaquinBoardState {
         throw new IllegalStateException("Board is missing cell of id " + id);
     }
 
+    /**
+     * Tests for the goal state by checking that all values are sorted in increasing order.
+     * The high prime number value of the EMPTY_ID is useful here as we do not need a special check.
+     *
+     * @return true if the current state represents the goal, false otherwise
+     */
     @Override
     public boolean isGoalState() {
         var lastSeenValue = getAtPosition(0, 0);

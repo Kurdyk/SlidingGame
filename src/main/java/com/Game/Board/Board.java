@@ -2,11 +2,10 @@ package com.Game.Board;
 
 import com.Game.Cell.CellUtilities;
 import com.Game.Cell.Position;
-import com.Game.Solver.SolutionStep;
 import com.Game.Solver.TaquinSolutionAlgorithm;
+import com.Game.Solver.TaquinSolutionHolder;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -159,7 +158,7 @@ public class Board {
         }
     }
 
-    public List<SolutionStep> solve(TaquinSolutionAlgorithm algorithm) {
-        return algorithm.solve(getBoardState());
+    public TaquinSolutionHolder solve(TaquinSolutionAlgorithm algorithm, long maxRuntime, long maxFrontierSize) {
+        return algorithm.solve(getBoardState(), maxRuntime, maxFrontierSize);
     }
 }

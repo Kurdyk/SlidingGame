@@ -4,18 +4,15 @@ import com.Game.Board.Board;
 import com.Game.Board.DefaultBoardState;
 import com.Game.Board.TargetBoardState;
 import com.Game.Cell.CellUtilities;
-import com.Game.Solver.AStar;
-import com.Game.Solver.GreedyAstar;
+import com.Game.Solver.*;
 import com.Game.Solver.Heuristic.DisplacedTilesHeuristic;
-import com.Game.Solver.Heuristic.LinearConflictHeuristic;
 import com.Game.Solver.Heuristic.ManhattanDistanceHeuristic;
 import com.Game.Solver.Heuristic.UniformCostHeuristic;
-import com.Game.Solver.IDAStar;
-import com.Game.Solver.TaquinSolutionAlgorithm;
 import com.Parser.NewLineParser;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -28,8 +25,11 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class connects our user interface defined in hello-view.fxml to the Taquin functionality.
@@ -115,7 +115,6 @@ public class TaquinController implements Initializable {
         var heuristic = switch (chosenHeuristic) {
             case "Manhattan Distance" -> new ManhattanDistanceHeuristic(targetBoard);
             case "Displacement" -> new DisplacedTilesHeuristic(targetBoard);
-            case "Linear Conflict + M.D." -> new LinearConflictHeuristic(targetBoard);
             default -> new UniformCostHeuristic();
         };
 
@@ -125,20 +124,75 @@ public class TaquinController implements Initializable {
             default -> new AStar(heuristic, withLogs);
         };
 
-        var solution = board.solve(algorithm);
-        if (solution == null) {
+        try {
+            var solution = board.solve(algorithm, 0, 0);
+            reportSolution(solution);
+        } catch (OutOfMemoryError error) {
+            System.out.println("---Summary of Algorithm---");
+            System.out.println("Ran out of space on size " + this.sizeField.getText() + " with " + chosenAlgorithm + " and " + chosenHeuristic);
+        }
+    }
+
+    private void reportSolution(TaquinSolutionHolder solution) {
+        if (solution.solutionSteps() == null) {
             System.out.println("Already solved");
             return;
         }
-        if (solution.isEmpty()) {
+        if (solution.solutionSteps().isEmpty()) {
             System.out.println("Failed to find solution");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Unable to solve puzzle");
+            alert.show();
             return;
         }
-        for (var step : solution) {
+        for (var step : solution.solutionSteps()) {
             System.out.println("Instruction: " + step.instruction());
         }
-        board.setBoardState(solution.get(solution.size() - 1).state());
+        System.out.println("---Summary of Algorithm---");
+        System.out.println("Solved size " + this.sizeField.getText() + " with " + chosenAlgorithm + " and " + chosenHeuristic);
+        System.out.println("Solution length: " + solution.solutionSteps().size());
+        String shuffleDepth = this.shuffleDepthField.getText();
+        if (shuffleDepth.equals("")) {
+            System.out.println("Puzzle is totally randomized");
+        } else {
+            System.out.println("Puzzle is " + shuffleDepth + " moves from goal");
+        }
+        System.out.println("Elapsed runtime: " + TimeUnit.NANOSECONDS.toMillis(solution.elapsedTime()));
+        System.out.println("Max Frontier Size: " + solution.maxFrontierSize());
+        System.out.println("Number of Expansions: " + solution.numberOfExpansions());
+        board.setBoardState(solution.solutionSteps().get(solution.solutionSteps().size() - 1).state());
         updateBoard();
+        writeExperiment(solution);
+    }
+
+    private void writeExperiment(TaquinSolutionHolder solutionHolder) {
+        try {
+            var subDir = this.sizeField.getText() + "x" + this.sizeField.getText();
+            var puzzleName = "solved_" + this.sizeField.getText() + "x_" + shuffleDepthField.getText() + "depth_" + chosenAlgorithm + "_" + chosenHeuristic.replace(' ', '_');
+            FileWriter writer = new FileWriter("experiments/" + subDir + "/" + puzzleName + ".txt");
+
+            // Write some text to the file
+            writer.write("Size: " + sizeField.getText());
+            writer.write("\n");
+            writer.write("Algorithm: " + chosenAlgorithm);
+            writer.write("\n");
+            writer.write("Heuristic: " + chosenHeuristic);
+            writer.write("\n");
+            writer.write("Shuffled Depth: " + shuffleDepthField.getText());
+            writer.write("\n");
+            writer.write("Solution length: " + solutionHolder.solutionSteps().size());
+            writer.write("\n");
+            writer.write("Runtime (millis): " + TimeUnit.NANOSECONDS.toMillis(solutionHolder.elapsedTime()));
+            writer.write("\n");
+            writer.write("Max Frontier Size: " + solutionHolder.maxFrontierSize());
+            writer.write("\n");
+            writer.write("Number of Expansions: " + solutionHolder.numberOfExpansions());
+
+            // Close the writer to save the file
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -7,7 +7,6 @@ import com.Game.Solver.Heuristic.Heuristic;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,17 +24,20 @@ public class IDAStar extends TaquinSolutionAlgorithm {
     private final boolean logProgress;
     private final Heuristic heuristic;
 
+    private long numExpansions = 0;
+    private long frontierSize = 0;
+
     public IDAStar(Heuristic heuristic, boolean logProgress) {
         this.heuristic = heuristic;
         this.logProgress = logProgress;
     }
 
     @Override
-    public List<SolutionStep> solve(TaquinBoardState initialState) {
+    public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxRuntime, long maxFrontierSize) {
 
         if (stateIsSolvable(initialState)) {
             System.out.println("Cannot be solved");
-            return Collections.emptyList();
+            return TaquinSolutionHolder.getEmpty();
         }
 
         if (logProgress) {
@@ -47,14 +49,17 @@ public class IDAStar extends TaquinSolutionAlgorithm {
         List<SolutionStep> path = new ArrayList<>();
         path.add(initialStep); // set the root of the tree to the initial board
 
+        var startTime = System.nanoTime();
+
         while (true) {
             if (this.logProgress) System.out.println("Bound : " + bound);
             var pair = this.solveForBound(path, 0, bound);
             if (pair.getKey() < 0) { // a solution was found
-                return pair.getValue();
+                var elapsedTime = System.nanoTime() - startTime;
+                return new TaquinSolutionHolder(pair.getValue(), elapsedTime, frontierSize, numExpansions);
             }
             if (pair.getKey() == Integer.MAX_VALUE) { // Should not happen since at this point all instance are solvable
-                return Collections.emptyList();
+                return TaquinSolutionHolder.getEmpty();
             }
             bound = pair.getKey(); // no solution was found, increasing the bound to depth + heuristic of the best board found
         }
@@ -62,9 +67,10 @@ public class IDAStar extends TaquinSolutionAlgorithm {
 
     /**
      * Procedure for IDA*
-     * @param path the current path
+     *
+     * @param path          the current path
      * @param current_depth the current depth in the tree
-     * @param bound the limit for the value depth + heuristic
+     * @param bound         the limit for the value depth + heuristic
      * @return a couple (x, y) where x is either negative to signal a solution or
      * current depth + heuristic of the last node of the path, used to set the bound for later iterations.
      * y is the list of solution steps required to solve the problem, y is null if the path doesn't end on a solution
@@ -102,8 +108,11 @@ public class IDAStar extends TaquinSolutionAlgorithm {
                 continue;
 
             path.add(solutionStep);
+            if (path.size() > frontierSize) {
+                frontierSize = path.size();
+            }
             var pair = solveForBound(path, newDistance, bound); // solve recursively for the new path
-
+            numExpansions++;
             if (pair.getKey() < 0) { // Solution found
                 return pair;
             }
