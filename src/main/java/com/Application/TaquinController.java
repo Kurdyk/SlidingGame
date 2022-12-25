@@ -167,8 +167,20 @@ public class TaquinController implements Initializable {
 
     private void writeExperiment(TaquinSolutionHolder solutionHolder) {
         try {
+
             var subDir = this.sizeField.getText() + "x" + this.sizeField.getText();
             var puzzleName = "solved_" + this.sizeField.getText() + "x_" + shuffleDepthField.getText() + "depth_" + chosenAlgorithm + "_" + chosenHeuristic.replace(' ', '_');
+
+            File directory = new File("experiments/" + subDir + "/");
+            if (!directory.mkdirs()) {
+                System.err.println("Error while creating a directory");
+            }
+
+            File file = new File("experiments/" + subDir + "/" + puzzleName + ".txt");
+            if(!file.createNewFile()) {
+                System.err.println("Error while creating a file");
+            }
+
             FileWriter writer = new FileWriter("experiments/" + subDir + "/" + puzzleName + ".txt");
 
             // Write some text to the file
