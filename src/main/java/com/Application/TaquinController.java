@@ -167,18 +167,43 @@ public class TaquinController implements Initializable {
 
     private void writeExperiment(TaquinSolutionHolder solutionHolder) {
         try {
+
             var subDir = this.sizeField.getText() + "x" + this.sizeField.getText();
-            var puzzleName = "solved_" + this.sizeField.getText() + "x_" + shuffleDepthField.getText() + "depth_" + chosenAlgorithm + "_" + chosenHeuristic.replace(' ', '_');
-            FileWriter writer = new FileWriter("experiments/" + subDir + "/" + puzzleName + ".txt");
+            var puzzleName = "solved_" + this.sizeField.getText() + "x_" + shuffleDepthField.getText() + "depth_" +
+                    ((chosenAlgorithm.equals(""))? "A*" : chosenAlgorithm) + "_" +
+                    ((chosenHeuristic.equals(""))? "Uniform Cost" : chosenHeuristic).replace(' ', '_');
+
+            File directory = new File("experiments/" + subDir + "/");
+            directory.mkdirs();
+
+            File file = new File("experiments/" + subDir + "/" + puzzleName + ".txt");
+            int cmpt = 0;
+            while(!file.createNewFile()) { // file already exsists
+                file = new File("experiments/" + subDir + "/" + puzzleName + "(" + cmpt++ + ")" + ".txt");
+            }
+
+            FileWriter writer = new FileWriter(file);
 
             // Write some text to the file
             writer.write("Size: " + sizeField.getText());
             writer.write("\n");
-            writer.write("Algorithm: " + chosenAlgorithm);
+            if (!chosenAlgorithm.equals("")) {
+                writer.write("Algorithm: " + chosenAlgorithm);
+            } else {
+                writer.write("Algorithm: A*");
+            }
             writer.write("\n");
-            writer.write("Heuristic: " + chosenHeuristic);
+            if (!chosenHeuristic.equals("")) {
+                writer.write("Heuristic: " + chosenHeuristic);
+            } else {
+                writer.write("Heuristic: Uniform Cost");
+            }
             writer.write("\n");
-            writer.write("Shuffled Depth: " + shuffleDepthField.getText());
+            if (!shuffleDepthField.getText().equals("")) {
+                writer.write("Shuffled Depth: " + shuffleDepthField.getText());
+            } else {
+                writer.write("Shuffled Depth: Random");
+            }
             writer.write("\n");
             writer.write("Solution length: " + solutionHolder.solutionSteps().size());
             writer.write("\n");
