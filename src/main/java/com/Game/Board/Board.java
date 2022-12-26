@@ -108,7 +108,7 @@ public class Board {
         for (int i = 0; i < numberOfMoves; i++) {
             //System.out.println("Shuffling step : " + i);
             int choice = random.nextInt(4);
-            if (lastDirectionChoice != -1 && choice == ~lastDirectionChoice) { // direction
+            if (lastDirectionChoice != -1 && choice == lastDirectionChoice) { // direction
                 choice = (choice + 1) % 4;
             }
             Position empty = boardState.getEmptyPosition();
