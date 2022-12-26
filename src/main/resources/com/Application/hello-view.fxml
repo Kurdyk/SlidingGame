@@ -8,7 +8,7 @@
 <TilePane xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" xmlns="http://javafx.com/javafx/19"
           fx:controller="com.Application.TaquinController">
     <HBox alignment="CENTER" spacing="30.0">
-        <HBox alignment="CENTER">
+        <VBox alignment="CENTER">
             <GridPane fx:id="boardDisplay">
                 <columnConstraints>
                     <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
@@ -17,7 +17,7 @@
                     <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
             </GridPane>
-        </HBox>
+        </VBox>
         <VBox fx:id="buttonBox" alignment="CENTER_RIGHT" spacing="10.0">
             <ComboBox fx:id="heuristicCombo" promptText="Choose Heuristic">
                 <items>
@@ -51,7 +51,15 @@
             </HBox>
             <HBox alignment="BASELINE_RIGHT" spacing="5.0">
                 <Label>Shuffled distance from goal</Label>
-                <TextField fx:id="shuffleDepthField" maxWidth="100.0" promptText="Shuffle depth" text="50"/>
+                <TextField fx:id="shuffleDepthField" maxWidth="100.0" promptText="Shuffle depth"/>
+            </HBox>
+            <HBox alignment="BASELINE_RIGHT" spacing="5.0">
+                <Label>Max runtime in Millis</Label>
+                <TextField fx:id="maxRuntimeField" maxWidth="100.0" promptText="Max runtime"/>
+            </HBox>
+            <HBox alignment="BASELINE_RIGHT" spacing="5.0">
+                <Label>Max frontier size</Label>
+                <TextField fx:id="maxFrontierSizeField" maxWidth="100.0" promptText="Max frontier"/>
             </HBox>
             <Button fx:id="newGameButton" mnemonicParsing="false" onAction="#onNewGameClick" text="New game"/>
             <Button fx:id="fileChooserButton" mnemonicParsing="false" onAction="#onFromFileClick" text="From file"/>

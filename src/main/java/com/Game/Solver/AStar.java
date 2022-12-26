@@ -22,7 +22,7 @@ import java.util.PriorityQueue;
  * previously seen version in the frontier.
  * If our new heuristic is lower, we could replace the previously seen version with our new, more optimal version.
  * We chose to omit this step because it required iterating through all nodes in the frontier, which dramatically
- * slowed down our algorithm. Thus our version of AStar may not find the optimal solution in all cases.
+ * slowed down our algorithm. Thus, our version of AStar may not find the optimal solution in all cases.
  **/
 public class AStar extends TaquinSolutionAlgorithm {
 
@@ -36,7 +36,7 @@ public class AStar extends TaquinSolutionAlgorithm {
     }
 
     @Override
-    public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxFrontierSize, long maxRuntime) {
+    public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxRuntime, long maxFrontierSize) {
         if (!stateIsSolvable(initialState)) {
             System.out.println("Cannot be solved");
             return TaquinSolutionHolder.getEmpty();
@@ -47,6 +47,7 @@ public class AStar extends TaquinSolutionAlgorithm {
         var seenStates = new HashSet<SolutionStep>();
 
         var initialStep = new SolutionStep(initialState, null, null, 0);
+        initialStep.setHeuristicValue(heuristic.getResult(initialStep));
         states.add(initialStep);
         seenStates.add(initialStep);
 
@@ -62,14 +63,15 @@ public class AStar extends TaquinSolutionAlgorithm {
             var currentState = states.poll();
 
             if (logProgress) {
-                System.out.println("evaluating current state");
+                System.out.println("Evaluating head of frontier with heuristic: " + currentState.getHeuristicValue());
+                System.out.println("Took head state out of " + (states.size() + 1) + " states");
                 System.out.println(currentState.state());
             }
 
             if (currentState.state().isGoalState()) {
                 long elapsedTime = System.nanoTime() - startTime;
                 var solutionSteps = unwindSolutionTree(currentState);
-                return new TaquinSolutionHolder(solutionSteps, elapsedTime, frontierSize, numExpansions);
+                return new TaquinSolutionHolder(solutionSteps, elapsedTime, frontierSize, numExpansions, false, false);
             }
 
             // We generate the possible successor states that occur when we pass ACTION into the Transition Function
@@ -87,10 +89,6 @@ public class AStar extends TaquinSolutionAlgorithm {
                 var instruction = TaquinBoardAction.mapFromDirection(direction);
                 // Run the transition function, producing a new state
                 newBoardState.processAction(instruction, emptyPosition);
-                if (logProgress) {
-                    System.out.println("Instruction: " + direction);
-                    System.out.println(newBoardState);
-                }
 
                 var newDistance = currentState.depth() + 1;
                 var solutionStep = new SolutionStep(newBoardState, currentState, instruction, newDistance);
@@ -111,6 +109,14 @@ public class AStar extends TaquinSolutionAlgorithm {
 
             if (states.size() > frontierSize) {
                 frontierSize = states.size();
+            }
+
+            if (maxFrontierSize > 0 && frontierSize > maxFrontierSize) {
+                return TaquinSolutionHolder.getExpiredFrontierSize();
+            }
+
+            if (maxRuntime > 0 && System.nanoTime() - startTime > maxRuntime) {
+                return TaquinSolutionHolder.getExpiredRuntime();
             }
         }
 

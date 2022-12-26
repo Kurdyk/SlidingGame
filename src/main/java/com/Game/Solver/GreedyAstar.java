@@ -25,7 +25,7 @@ public class GreedyAstar extends TaquinSolutionAlgorithm {
     }
 
     @Override
-    public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxFrontierSize, long maxRuntime) {
+    public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxRuntime, long maxFrontierSize) {
         if (!stateIsSolvable(initialState)) {
             System.out.println("Cannot be solved");
             return TaquinSolutionHolder.getEmpty();
@@ -58,7 +58,7 @@ public class GreedyAstar extends TaquinSolutionAlgorithm {
             if (currentState.state().isGoalState()) {
                 var solutionSteps = unwindSolutionTree(currentState);
                 var elapsedTime = System.nanoTime() - startTime;
-                return new TaquinSolutionHolder(solutionSteps, elapsedTime, frontierSize, numExpansions);
+                return new TaquinSolutionHolder(solutionSteps, elapsedTime, frontierSize, numExpansions, false, false);
             }
 
             // We generate the possible successor states that occur when we pass ACTION into the Transition Function
@@ -100,6 +100,14 @@ public class GreedyAstar extends TaquinSolutionAlgorithm {
 
             if (states.size() > frontierSize) {
                 frontierSize = states.size();
+            }
+            
+            if (maxFrontierSize > 0 && frontierSize > maxFrontierSize) {
+                return TaquinSolutionHolder.getExpiredFrontierSize();
+            }
+
+            if (maxRuntime > 0 && System.nanoTime() - startTime > maxRuntime) {
+                return TaquinSolutionHolder.getExpiredRuntime();
             }
         }
 
