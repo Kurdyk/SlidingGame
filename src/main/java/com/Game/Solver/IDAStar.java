@@ -4,6 +4,7 @@ import com.Game.Board.TaquinBoardAction;
 import com.Game.Board.TaquinBoardDirection;
 import com.Game.Board.TaquinBoardState;
 import com.Game.Solver.Heuristic.Heuristic;
+import com.Game.Solver.Heuristic.UniformCostHeuristic;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -82,7 +83,11 @@ public class IDAStar extends TaquinSolutionAlgorithm {
             return new Pair<>(-currentState.depth(), unwindSolutionTree(currentState));
         }
 
-        if (current_depth + currentState.getHeuristicValue() > bound) { // depth limit reach with no solution
+        if (this.heuristic instanceof UniformCostHeuristic) {
+            if (current_depth + 1 > bound)
+                return new Pair<>(current_depth + 1, null);
+        }
+        else if (current_depth + currentState.getHeuristicValue() > bound) { // depth limit reach with no solution
             return new Pair<>(current_depth + currentState.getHeuristicValue(), null);
         }
 
