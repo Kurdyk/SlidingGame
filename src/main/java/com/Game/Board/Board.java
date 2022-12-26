@@ -107,25 +107,19 @@ public class Board {
         int lastDirectionChoice = -1; // direction of the move of the empty tile
         for (int i = 0; i < numberOfMoves; i++) {
             //System.out.println("Shuffling step : " + i);
-            int choice = random.nextInt(4);
-            if (lastDirectionChoice != -1 && choice == lastDirectionChoice) { // direction
-                choice = (choice + 1) % 4;
+            TaquinBoardDirection choice = TaquinBoardDirection.values()[random.nextInt(4)];
+            if (lastDirectionChoice != -1 && choice == TaquinBoardDirection.values()[lastDirectionChoice].mapFromOpposite()) { // direction
+                choice = TaquinBoardDirection.values()[(choice.ordinal() + 1) % 4];
             }
             Position empty = boardState.getEmptyPosition();
-            TaquinBoardDirection direction = switch (choice) {
-                case 0 -> TaquinBoardDirection.UP;
-                case 1 -> TaquinBoardDirection.LEFT;
-                case 2 -> TaquinBoardDirection.RIGHT;
-                default -> TaquinBoardDirection.DOWN;
-            };
 
-            if (!boardState.targetHasNeighbor(direction, empty)) { // illegal move
+            if (!boardState.targetHasNeighbor(choice, empty)) { // illegal move
                 i--;
                 continue;
             }
 
-            boardState.processAction(TaquinBoardAction.mapFromDirection(direction), empty);
-            lastDirectionChoice = choice;
+            boardState.processAction(TaquinBoardAction.mapFromDirection(choice), empty);
+            lastDirectionChoice = choice.ordinal();
         }
 
     }
