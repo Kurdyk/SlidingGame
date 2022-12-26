@@ -87,8 +87,8 @@ public class IDAStar extends TaquinSolutionAlgorithm {
             if (current_depth + 1 > bound)
                 return new Pair<>(current_depth + 1, null);
         }
-        else if (current_depth + currentState.getHeuristicValue() > bound) { // depth limit reach with no solution
-            return new Pair<>(current_depth + currentState.getHeuristicValue(), null);
+        else if (currentState.getHeuristicValue() > bound) { // depth limit reach with no solution
+            return new Pair<>(currentState.getHeuristicValue(), null);
         }
 
         Integer min = Integer.MAX_VALUE; // the value to return as x
