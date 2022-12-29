@@ -7,5 +7,14 @@ public enum TaquinBoardDirection {
     UP,
     RIGHT,
     DOWN,
-    LEFT
+    LEFT;
+
+    public TaquinBoardDirection mapFromOpposite() {
+        return switch (this) {
+            case UP -> DOWN;
+            case RIGHT -> LEFT;
+            case DOWN -> UP;
+            case LEFT -> RIGHT;
+        };
+    }
 }

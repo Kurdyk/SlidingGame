@@ -14,23 +14,51 @@ def read_files_in_directory(directory):
             file_dict = {}
             for line in f:
                 splitted = line.split(':')
-                file_dict[splitted[0].rstrip()] = splitted[1].rstrip()
+                file_dict[splitted[0].rstrip().strip()] = splitted[1].rstrip().strip()
             parsed_experiments.append(file_dict)
 
     # Print the contents of the file
-    return parsed_experiments
+    return sorted(parsed_experiments, key=lambda item: item['Shuffled Depth'])
 
 def graph_experiment(parsed_experiments):
     fig, ax = plt.subplots()
-    x = list()
-    y = list()
+    ucs_y = list()
+    ucs_x = list()
+    displ_y = list()
+    displ_x = list()
+    manh_x = list()
+    manh_y = list()
+
+    ucs = 'Uniform Cost'
+    displ = 'Displacement'
+    mand = 'Manhattan Distance'
+
     for experiment in parsed_experiments:
-        x.append(experiment['Heuristic'])
-        y.append(experiment['Max Frontier Size'])
+        heuristic = experiment['Heuristic']
+        if (heuristic == ucs):
+            ucs_y.append(int(experiment['Runtime (millis)']))
+            ucs_x.append(int(experiment['Shuffled Depth']))
+        elif (heuristic == displ):
+            displ_y.append(int(experiment['Runtime (millis)']))
+            displ_x.append(int(experiment['Shuffled Depth']))
+        elif (heuristic == mand):
+            manh_x.append(int(experiment['Shuffled Depth']))
+            manh_y.append(int(experiment['Runtime (millis)']))
     
-    ax.bar(x, y)
-    ax.set_xlabel('Heuristic')
-    ax.set_ylabel('Max Frontier Size')
+    ucs_x.sort()
+    ucs_y.sort()
+    displ_x.sort()
+    displ_y.sort()
+    manh_x.sort()
+    manh_y.sort()
+
+    ax.plot(ucs_x, ucs_y, color="blue", label="UCS")
+    ax.plot(displ_x, displ_y, color="green", label="Displacement")
+    ax.plot(manh_x, manh_y, color="red", label="Manhattan Distance")
+
+    ax.set_ylabel('Runtime (millis)')
+    ax.set_xlabel('Shuffled Depth')
+    plt.legend()
     plt.show()
 
 if __name__ == "__main__":
