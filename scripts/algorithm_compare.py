@@ -51,7 +51,8 @@ def find_min_max(data_set, parameter, error_rate):
     values = list()
     for data in data_set:
         values.append(int(data[parameter]))
-    to_remove = int(error_rate * len(values))
+    to_remove = int((error_rate * len(values)) / 2)
+    # print(to_remove)
     values.sort()
     return values[to_remove], values[len(values) - to_remove - 1]
 
@@ -60,7 +61,7 @@ def compare_algorithm():
     size = input("On what size do you want to compare the algorithms?\n")
     parameter = input("On what paramater do you want to compare the algorithms? "
                       "Runtime_(millis)/Max_Frontier_Size/Number_Of_Expansions\n")
-    error_rate = float(input("Wanted error rate? 0.05 is recommanded\n"))
+    error_rate = float(input("Wanted error rate? 0.05 is recommanded when having a LOT of data, otherwise enter more\n"))
 
     color_per_algo = {"A*": "green", "IDA*": "red", "GreedyA*": "blue"}
 
