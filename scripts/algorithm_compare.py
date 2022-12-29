@@ -65,11 +65,14 @@ def compare_algorithm():
     color_per_algo = {"A*": "green", "IDA*": "red", "GreedyA*": "blue"}
 
     # Create a figure and axis
-    fig, ax = plt.subplots()
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
-    max_y = -math.inf
+    axis = [ax1, ax2, ax3]
+    j = 0
 
     for algo in color_per_algo.keys():
+
+        max_y = -math.inf
 
         print(f"Algotithm = {algo}")
 
@@ -82,7 +85,7 @@ def compare_algorithm():
             upper_b = 50 * (1 + i)
             data_set = filter_by_depth(lower_b, upper_b, all_data)
             mini, maxi = find_min_max(data_set, parameter, error_rate)
-            print(i, mini, maxi)
+            # print(i, mini, maxi)
             if mini == -1:
                 i += 1
                 continue
@@ -93,14 +96,24 @@ def compare_algorithm():
             # Add the rectangle to the axis
             rect = Rectangle((x0, y0), x1-x0, y1-y0, facecolor=color_per_algo[algo], edgecolor="black",
                              alpha=0.4)
-            ax.add_patch(rect)
+            axis[j].add_patch(rect)
             i += 1
 
-    # Set the limits of the axis
-    ax.set_xlim([0, 50 * (i + 1)])
-    ax.set_ylim([0, max_y])
+        # Set the limits of the axis
+        axis[j].set_xlim([0, 50 * (i + 1)])
+        axis[j].set_ylim([0, max_y])
+
+        # Label the x-axis and y-axis
+        axis[j].set_xlabel('Shuffle Depth')
+        axis[j].set_ylabel(parameter)
+
+        # Add a title
+        axis[j].set_title(f"Graph for {algo}")
+
+        j += 1
 
     # Show the plot
+    fig.subplots_adjust(hspace=0.4, wspace=1)
     plt.show()
 
 
