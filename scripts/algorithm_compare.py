@@ -32,7 +32,7 @@ def filter_by_depth(lower_bound, upper_bound, data):
     for dictio in data:
         if dictio["Shuffled_Depth"] == "Random":
             continue
-        if lower_bound <= int(dictio["Shuffled_Depth"]) < upper_bound:
+        if lower_bound < int(dictio["Shuffled_Depth"]) <= upper_bound:
             result.append(dictio)
     return result
 
@@ -60,7 +60,7 @@ def find_min_max(data_set, parameter, error_rate):
 def compare_algorithm():
     size = input("On what size do you want to compare the algorithms?\n")
     parameter = input("On what paramater do you want to compare the algorithms? "
-                      "Runtime_(millis)/Max_Frontier_Size/Number_Of_Expansions\n")
+                      "Runtime_(millis)/Max_Frontier_Size/Number_of_Expansions\n")
     error_rate = float(input("Wanted error rate? 0.05 is recommanded when having a LOT of data, otherwise enter more\n"))
 
     color_per_algo = {"A*": "green", "IDA*": "red", "GreedyA*": "blue"}
@@ -81,7 +81,7 @@ def compare_algorithm():
         all_data = filter_by_algo(algo, all_data)
 
         i = 0
-        while i < 10:
+        while i < 6:
             lower_b = 50 * i
             upper_b = 50 * (1 + i)
             data_set = filter_by_depth(lower_b, upper_b, all_data)
@@ -101,7 +101,7 @@ def compare_algorithm():
             i += 1
 
         # Set the limits of the axis
-        axis[j].set_xlim([0, 50 * (i + 1)])
+        axis[j].set_xlim([0, 50 * i])
         axis[j].set_ylim([0, max_y])
 
         # Label the x-axis and y-axis
