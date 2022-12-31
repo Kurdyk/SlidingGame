@@ -34,7 +34,7 @@ public class IDAStar extends TaquinSolutionAlgorithm {
     }
 
     @Override
-    public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxFrontierSize, long maxRuntime) {
+    public TaquinSolutionHolder solve(TaquinBoardState initialState, long maxRuntime, long maxFrontierSize) {
 
         if (!stateIsSolvable(initialState)) {
             System.out.println("Cannot be solved");
@@ -53,6 +53,12 @@ public class IDAStar extends TaquinSolutionAlgorithm {
         var startTime = System.nanoTime();
 
         while (true) {
+            if (maxFrontierSize > 0 && frontierSize > maxFrontierSize) {
+                return TaquinSolutionHolder.getExpiredFrontierSize();
+            }
+            if (maxRuntime > 0 && System.nanoTime() - startTime > maxRuntime) {
+                return TaquinSolutionHolder.getExpiredRuntime();
+            }
             if (this.logProgress) System.out.println("Bound : " + bound);
             var pair = this.solveForBound(path, 0, bound);
             if (pair.getKey() < 0) { // a solution was found
@@ -104,7 +110,7 @@ public class IDAStar extends TaquinSolutionAlgorithm {
             var instruction = TaquinBoardAction.mapFromDirection(direction);
             newBoardState.processAction(instruction, emptyPosition);
 
-            // creating tge new solution step
+            // creating the new solution step
             var newDistance = currentState.depth() + 1;
             var solutionStep = new SolutionStep(newBoardState, currentState, instruction, newDistance);
             solutionStep.setHeuristicValue(heuristic.getResult(solutionStep));
