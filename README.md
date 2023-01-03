@@ -3,10 +3,12 @@
 Implementation of an arbitrarily sized Taquin/Sliding puzzle for the project Artificial Intelligence at Dauphine PSL.
 
 To run the project:<br>
-You need a version of maven that support java 17, the version of apt is not recent enough. Consider having 
-an up-to-date version from the <a hlink=https://maven.apache.org/>official maven website</a>. You can:
-- Simply run the project with `mvn javafx:run`
-- Build a jar with `mvn package`. A fat jar will be generated in the target folder named "target/Taquin-1.0-SNAPSHOT-jar-with-dependencies.jar".
+Requirements:
+- `maven` (we are on version 3.8.7) Consider using an up-to-date version from the <a hlink=https://maven.apache.org/>official maven website</a>. 
+- Java version: `17.0.5`
+Running the project
+- You can simply run the project with `mvn javafx:run` from the root project directory
+- You can also build a jar with `mvn package`. A fat jar will be generated in the target folder named `target/Taquin-1.0-SNAPSHOT-jar-with-dependencies.jar`.
 You can then run it with `java -jar`.
 
 
